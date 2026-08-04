@@ -28,6 +28,9 @@ const PanelResizerEngine = {
     document.getElementById("quickLeftToggleBtn")?.addEventListener("click", () => this.togglePanel("left"));
     document.getElementById("quickRightToggleBtn")?.addEventListener("click", () => this.togglePanel("right"));
 
+    // Bind Preset Width Cycle Button
+    document.getElementById("leftPresetBtn")?.addEventListener("click", () => this.cycleLeftPreset());
+
     // Global Shortcuts: Ctrl+[ (Left Panel), Ctrl+] (Right Panel)
     document.addEventListener("keydown", (e) => {
       if (e.ctrlKey && e.key === "[") {
@@ -38,6 +41,30 @@ const PanelResizerEngine = {
         this.togglePanel("right");
       }
     });
+  },
+
+  cycleLeftPreset() {
+    const panelLeft = document.getElementById("panelLeft");
+    if (!panelLeft) return;
+
+    const maxW = Math.floor(window.innerWidth * 0.7);
+    let targetW = 360;
+
+    if (this.leftWidth < 300) targetW = 360;
+    else if (this.leftWidth < 450) targetW = 540;
+    else if (this.leftWidth < 600) targetW = maxW;
+    else targetW = 260;
+
+    this.leftWidth = targetW;
+    panelLeft.style.width = `${targetW}px`;
+    panelLeft.classList.remove("collapsed");
+    const resizerLeft = document.getElementById("resizerLeft");
+    const toggleBtn = document.getElementById("toggleLeftPanelBtn");
+    const quickBtn = document.getElementById("quickLeftToggleBtn");
+    if (resizerLeft) resizerLeft.classList.remove("collapsed");
+    if (toggleBtn) toggleBtn.textContent = "◀";
+    if (quickBtn) quickBtn.classList.add("active");
+    this.leftCollapsed = false;
   },
 
   setupResizer(resizerElem, panelElem, side) {
@@ -62,8 +89,8 @@ const PanelResizerEngine = {
       const dx = currentX - startX;
       let newWidth = side === "left" ? startWidth + dx : startWidth - dx;
 
-      const minW = 200;
-      const maxW = Math.floor(window.innerWidth * 0.7); // Allow dragging up to 70% of screen width
+      const minW = 180; // Allow dragging down to 180px
+      const maxW = Math.floor(window.innerWidth * 0.8); // Allow dragging up to 80% of screen width
       newWidth = Math.max(minW, Math.min(maxW, newWidth));
 
       panelElem.style.width = `${newWidth}px`;
@@ -89,12 +116,15 @@ const PanelResizerEngine = {
       document.removeEventListener("mouseup", onMouseUp);
     };
 
-    // Double Click to reset panel width
+    // Double Click to cycle preset widths
     resizerElem.addEventListener("dblclick", () => {
-      const defaultW = side === "left" ? 340 : 400;
-      panelElem.style.width = `${defaultW}px`;
-      if (side === "left") this.leftWidth = defaultW;
-      else this.rightWidth = defaultW;
+      if (side === "left") {
+        this.cycleLeftPreset();
+      } else {
+        const defaultW = 400;
+        panelElem.style.width = `${defaultW}px`;
+        this.rightWidth = defaultW;
+      }
     });
 
     resizerElem.addEventListener("mousedown", onMouseDown);
