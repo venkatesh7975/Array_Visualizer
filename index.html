@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="glassy">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Array Patterns Visualizer — 💎 Glassy Premier DSA Thinking Patterns & 60 LeetCode Problems</title>
+  <meta name="description" content="Interactive luxury visual learning platform for 12 Array Patterns and 60 LeetCode problems with animated step execution, synchronized code line tracking, live variable watching, and pattern quizzes.">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="app-header">
+    <div class="brand-section">
+      <span class="brand-logo">🧩</span>
+      <div style="display: flex; flex-direction: column;">
+        <span class="brand-title">ARRAY PATTERNS</span>
+        <span style="font-size: 0.62rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.08em;">DSA VISUAL MASTERCLASS</span>
+      </div>
+      <span class="brand-badge">💎 Glassy Premier</span>
+    </div>
+
+    <div class="controls-section">
+      <div class="selector-group">
+        <label for="patternSelect" class="select-label">PATTERN</label>
+        <select id="patternSelect" class="glass-select">
+          <!-- 12 Patterns populated dynamically -->
+        </select>
+      </div>
+
+      <div class="selector-group">
+        <label for="problemSelect" class="select-label">PROBLEM (1-5)</label>
+        <select id="problemSelect" class="glass-select">
+          <!-- 5 Problems per pattern populated dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <div class="badge-group">
+      <span id="diffBadge" class="badge badge-easy">Easy</span>
+      <span id="lcNumBadge" class="badge badge-info">LC #1480</span>
+      <span id="timeCompBadge" class="badge badge-info">⏱️ O(N)</span>
+      <span id="spaceCompBadge" class="badge badge-info">💾 O(1)</span>
+    </div>
+
+    <div class="controls-section">
+      <button id="customInputBtn" class="ctrl-btn" title="Set Custom Input Case">✏️ Custom Input</button>
+      <button id="shortcutsBtn" class="ctrl-btn" title="Keyboard Shortcuts (Key: ?)">⌨️ Shortcuts</button>
+      <button id="themeToggleBtn" class="ctrl-btn" title="Cycle Glassy / Dark / Light Themes">💎 Glassy Premier</button>
+      <button id="fullscreenBtn" class="ctrl-btn" title="Toggle Fullscreen">⛶</button>
+    </div>
+  </header>
+
+  <!-- MAIN RESIZABLE IDE LAYOUT -->
+  <main class="app-workspace" id="ideContainer">
+
+    <!-- LEFT PANEL: PROBLEM & PATTERN GUIDE -->
+    <section class="panel-left" id="panelLeft">
+      <div class="tab-header">
+        <nav id="leftTabs" style="display: flex; gap: 0.2rem;">
+          <button class="tab-btn active" data-tab="tab-overview">Overview</button>
+          <button class="tab-btn" data-tab="tab-pattern">Pattern Guide</button>
+          <button class="tab-btn" data-tab="tab-approaches">Brute vs Optimal</button>
+          <button class="tab-btn" data-tab="tab-mistakes">Mistakes</button>
+          <button class="tab-btn" data-tab="tab-quiz">Quiz</button>
+        </nav>
+        <button id="toggleLeftPanelBtn" class="panel-toggle-btn" title="Collapse Left Panel (Ctrl+[)">◀</button>
+      </div>
+
+      <div class="tab-body">
+        <!-- OVERVIEW TAB -->
+        <div id="tab-overview" class="tab-content active">
+          <div class="quiz-card" style="margin-bottom: 1.25rem;">
+            <div style="font-size: 0.72rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem;">QUESTION STATEMENT</div>
+            <h2 id="probTitle" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main); line-height: 1.35;">1480. Running Sum of 1d Array</h2>
+            <p id="probStatement" style="font-size: 0.88rem; color: var(--text-main); margin-top: 0.6rem; line-height: 1.55; font-weight: 500;"></p>
+          </div>
+
+          <div class="quiz-card" style="margin-bottom: 1.25rem;">
+            <div style="font-size: 0.72rem; font-weight: 800; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem;">EXAMPLE WALKTHROUGH</div>
+            <div id="probExamples" style="font-family: var(--font-code); font-size: 0.84rem; color: #ffffff; background: rgba(5,8,14,0.85); padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-glass); margin-top: 0.3rem; white-space: pre-wrap; line-height: 1.5;">
+              <!-- Example content inserted dynamically -->
+            </div>
+          </div>
+
+          <div class="quiz-card">
+            <div style="font-size: 0.72rem; font-weight: 800; color: var(--accent-purple); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem;">INPUT CONSTRAINTS</div>
+            <ul id="probConstraints" style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.4rem; padding-left: 1.2rem; line-height: 1.6;">
+              <!-- Constraints inserted dynamically -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- PATTERN GUIDE TAB -->
+        <div id="tab-pattern" class="tab-content">
+          <div class="quiz-card" style="margin-bottom: 1rem;">
+            <h3 id="patternGuideTitle" style="font-size: 1.05rem; font-weight: 900; color: var(--accent-gold);">Pattern 1: Array Traversal</h3>
+            <p id="patternGuideDesc" style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.45;"></p>
+          </div>
+
+          <div class="quiz-card" style="margin-bottom: 1rem;">
+            <h4 style="font-size: 0.84rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.06em;">When to use this pattern?</h4>
+            <ul id="patternUseCases" style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.4rem; padding-left: 1.2rem; line-height: 1.5;"></ul>
+          </div>
+
+          <div class="quiz-card" style="margin-bottom: 1rem;">
+            <h4 style="font-size: 0.84rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.06em;">Generic Template Code</h4>
+            <pre id="patternTemplateCode" style="font-family: var(--font-code); font-size: 0.82rem; background: rgba(5,8,14,0.9); padding: 0.75rem; border-radius: 8px; margin-top: 0.4rem; color: #e2e8f0; white-space: pre; tab-size: 2; border: 1px solid var(--border-glass);"></pre>
+          </div>
+
+          <div class="quiz-card">
+            <h4 style="font-size: 0.84rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.06em;">Interview Tips</h4>
+            <ul id="patternTips" style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.4rem; padding-left: 1.2rem; line-height: 1.5;"></ul>
+          </div>
+        </div>
+
+        <!-- BRUTE VS OPTIMAL TAB -->
+        <div id="tab-approaches" class="tab-content">
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="quiz-card" style="border-left: 4px solid var(--accent-amber);">
+              <h4 style="font-size: 0.92rem; font-weight: 900; color: var(--accent-amber);">🐢 Brute Force Approach</h4>
+              <p id="bruteDesc" style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.45;"></p>
+              <div style="font-family: var(--font-code); font-size: 0.8rem; color: var(--accent-cyan); margin-top: 0.6rem; font-weight: 700;">Time: <span id="bruteTime">O(N²)</span> | Space: <span id="bruteSpace">O(1)</span></div>
+            </div>
+
+            <div class="quiz-card" style="border-left: 4px solid var(--accent-green);">
+              <h4 style="font-size: 0.92rem; font-weight: 900; color: var(--accent-green);">⚡ Optimized Approach</h4>
+              <p id="optimalDesc" style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.45;"></p>
+              <div style="font-family: var(--font-code); font-size: 0.8rem; color: var(--accent-green); margin-top: 0.6rem; font-weight: 800;">Time: <span id="optimalTime">O(N)</span> | Space: <span id="optimalSpace">O(1)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMMON MISTAKES TAB -->
+        <div id="tab-mistakes" class="tab-content">
+          <div class="quiz-card">
+            <h3 style="color: var(--accent-amber); font-size: 0.92rem; font-weight: 900;">⚠️ Common Mistakes & Edge Cases</h3>
+            <div id="commonMistakesList" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.6rem; font-size: 0.86rem; color: var(--text-muted); line-height: 1.5;">
+              <!-- Inserted dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- QUIZ TAB -->
+        <div id="tab-quiz" class="tab-content">
+          <div class="quiz-container" id="quizContainer">
+            <!-- Quiz inserted dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEFT RESIZER HANDLE -->
+    <div class="panel-resizer" id="resizerLeft"></div>
+
+    <!-- CENTER PANEL: INTERACTIVE VISUALIZATION CANVAS -->
+    <section class="panel-center" id="panelCenter">
+      <div class="viz-header-toolbar">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <button id="quickLeftToggleBtn" class="panel-toggle-btn active" title="Toggle Left Panel (Ctrl+[)">◧ Left Panel</button>
+          <div class="algo-toggle-group">
+            <button id="modeOptimalBtn" class="algo-mode-btn active">⚡ Optimized Engine</button>
+            <button id="modeBruteBtn" class="algo-mode-btn">🐢 Brute Force Engine</button>
+          </div>
+          <button id="quickRightToggleBtn" class="panel-toggle-btn active" title="Toggle Right Panel (Ctrl+])">◨ Right Panel</button>
+        </div>
+
+        <!-- CANVAS ZOOM CONTROLS -->
+        <div style="display: flex; align-items: center; gap: 0.35rem;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted);">ZOOM:</span>
+          <button id="zoomOutBtn" class="panel-toggle-btn" title="Zoom Out Canvas (-)">🔍 -</button>
+          <span id="zoomValBadge" class="badge badge-info" style="font-family: var(--font-code); min-width: 45px; text-align: center;">100%</span>
+          <button id="zoomInBtn" class="panel-toggle-btn" title="Zoom In Canvas (+)">🔍 +</button>
+          <button id="zoomResetBtn" class="panel-toggle-btn" title="Reset Zoom to 100%">🎯 Reset</button>
+        </div>
+
+        <div class="viz-status-badge">
+          <span id="stepCounterBadge" class="badge badge-info">Step 0 / 0</span>
+          <span id="stepActionBadge" class="badge badge-easy">Ready</span>
+        </div>
+      </div>
+
+      <!-- MAIN SCROLLABLE CANVAS WORKSPACE -->
+      <div class="viz-canvas" id="vizCanvas">
+        
+        <!-- CALLOUT BANNER / FORMULA DISPLAY -->
+        <div id="vizFormulaCallout" class="formula-callout">
+          <span id="formulaLabel" class="formula-label">Operation:</span>
+          <span id="formulaText" class="formula-val">Select a problem to start visualization</span>
+        </div>
+
+        <!-- SCALABLE VIEWPORT WRAPPER -->
+        <div id="canvasViewport" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);">
+
+          <!-- 1D ARRAY CONTAINER -->
+          <div id="arrayVisualContainer" class="array-visual-wrapper">
+            <!-- Dynamically generated 3D crystal glass array elements -->
+          </div>
+
+          <!-- 2D MATRIX CONTAINER -->
+          <div id="matrixVisualContainer" class="matrix-visual-wrapper" style="display: none;">
+            <!-- Dynamically generated 2D grid -->
+          </div>
+
+          <!-- AUXILIARY DATA STRUCTURES -->
+          <div id="auxVisualContainer" class="aux-visual-wrapper">
+            <!-- HashMap Grid / Prefix Array / Sliding Window Callout -->
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- STEP EXPLANATION FOOTER IN CANVAS -->
+      <div class="viz-explanation-bar" id="explanationBar">
+        <div class="exp-icon">💡</div>
+        <div class="exp-text" id="explanationText">Click Play (Space) or Next (Right Arrow) to begin stepping through the visual execution.</div>
+      </div>
+    </section>
+
+    <!-- RIGHT RESIZER HANDLE -->
+    <div class="panel-resizer" id="resizerRight"></div>
+
+    <!-- RIGHT PANEL: CODE & PARALLEL LIVE DRY RUN -->
+    <section class="panel-right" id="panelRight">
+      <div class="tab-header">
+        <nav id="rightTabs" style="display: flex; gap: 0.2rem;">
+          <button class="tab-btn active" data-tab="tab-code">Code & Dry Run</button>
+          <button class="tab-btn" data-tab="tab-variables">Variables</button>
+          <button class="tab-btn" data-tab="tab-dryrun">Dry Run Table</button>
+          <button class="tab-btn" data-tab="tab-logs">Logs</button>
+        </nav>
+        <button id="toggleRightPanelBtn" class="panel-toggle-btn" title="Collapse Right Panel (Ctrl+])">▶</button>
+      </div>
+
+      <div class="tab-body">
+        <!-- CODE & PARALLEL DRY RUN TAB -->
+        <div id="tab-code" class="tab-content active" style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div class="code-toolbar">
+            <span class="code-title">SYNCHRONIZED CODE</span>
+            <div class="lang-selector" id="langSelector">
+              <button class="lang-btn active" data-lang="javascript">JS</button>
+              <button class="lang-btn" data-lang="python">Python</button>
+              <button class="lang-btn" data-lang="java">Java</button>
+              <button class="lang-btn" data-lang="cpp">C++</button>
+            </div>
+          </div>
+          <div id="codeDisplayBox" class="code-display-block">
+            <!-- Rendered colorful code with highlighted current step line -->
+          </div>
+
+          <!-- PARALLEL LIVE DRY RUN CARD -->
+          <div id="codeDryRunCard" class="quiz-card" style="border-left: 4px solid var(--accent-cyan); background: rgba(9, 14, 26, 0.85);">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 0.3rem;">⚡ PARALLEL CODE DRY RUN</span>
+              <span id="codeDryRunLineBadge" class="badge badge-info" style="font-family: var(--font-code);">Line 1</span>
+            </div>
+            <div id="codeDryRunVars" style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem;">
+              <!-- Live variable pills for active line -->
+            </div>
+            <div id="codeDryRunOp" style="font-family: var(--font-code); font-size: 0.84rem; color: var(--accent-gold); font-weight: 800; margin-top: 0.4rem;"></div>
+            <div id="codeDryRunExp" style="font-size: 0.82rem; color: var(--text-main); margin-top: 0.2rem; line-height: 1.45;"></div>
+          </div>
+        </div>
+
+        <!-- VARIABLES TAB -->
+        <div id="tab-variables" class="tab-content">
+          <div class="quiz-card">
+            <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.6rem;">🔍 Live Variable Watch</h3>
+            <div id="varWatchGrid" class="var-watch-grid">
+              <!-- Variable cards dynamically updated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- DRY RUN TABLE TAB -->
+        <div id="tab-dryrun" class="tab-content">
+          <div class="quiz-card">
+            <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.6rem;">📊 Step-by-Step Execution Table</h3>
+            <div class="table-scroll-wrap">
+              <table class="dry-run-table">
+                <thead>
+                  <tr id="dryRunHeaderRow">
+                    <th>Step</th>
+                    <th>Iteration</th>
+                    <th>Element</th>
+                    <th>Operation</th>
+                    <th>Result / State</th>
+                  </tr>
+                </thead>
+                <tbody id="dryRunTableBody">
+                  <!-- Generated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOGS TAB -->
+        <div id="tab-logs" class="tab-content">
+          <div class="quiz-card">
+            <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.6rem;">📜 Execution Log Stream</h3>
+            <div id="executionLogBox" class="log-stream-box">
+              <div class="log-entry" style="color: var(--accent-cyan);">[System] Visualizer Engine Initialized with Glassy Premier Theme. Ready.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM TIMELINE CONTROLS -->
+  <footer class="app-footer">
+    <div class="timeline-wrapper">
+      <input type="range" id="timelineSlider" class="timeline-range" min="0" max="0" value="0" step="1">
+      <div id="timelineProgress" class="timeline-progress-bar"></div>
+    </div>
+
+    <div class="controls-bar">
+      <div class="control-btn-group">
+        <button id="resetBtn" class="ctrl-btn" title="Reset Timeline (R)">⏮ Reset</button>
+        <button id="prevBtn" class="ctrl-btn" title="Previous Step (Left Arrow)">◀ Prev</button>
+        <button id="playBtn" class="ctrl-btn ctrl-primary" title="Play / Pause (Spacebar)">▶ Play</button>
+        <button id="nextBtn" class="ctrl-btn" title="Next Step (Right Arrow)">Next ▶</button>
+      </div>
+
+      <div class="speed-control-group">
+        <label for="speedSlider">Speed:</label>
+        <input type="range" id="speedSlider" min="0.5" max="3" step="0.5" value="1">
+        <span id="speedValLabel" class="speed-val">1.0x</span>
+      </div>
+
+      <div class="color-legend-bar">
+        <span class="legend-item"><span class="legend-dot blue"></span> Current</span>
+        <span class="legend-item"><span class="legend-dot purple"></span> Pointer</span>
+        <span class="legend-item"><span class="legend-dot yellow"></span> Window</span>
+        <span class="legend-item"><span class="legend-dot green"></span> Match</span>
+        <span class="legend-item"><span class="legend-dot red"></span> Rejected</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CUSTOM INPUT MODAL -->
+  <div id="customInputModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ Enter Custom Test Case</h3>
+        <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+          <label for="customArrayInput" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Array / Elements (comma separated):</label>
+          <input type="text" id="customArrayInput" class="glass-input" placeholder="e.g. 2, 7, 11, 15 or 1, 2, 3, 4, 5">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.3rem;" id="customTargetGroup">
+          <label for="customTargetInput" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Target Value / K Value (if applicable):</label>
+          <input type="number" id="customTargetInput" class="glass-input" placeholder="e.g. 9">
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+        <button id="cancelModalBtn" class="ctrl-btn">Cancel</button>
+        <button id="applyCustomInputBtn" class="ctrl-btn ctrl-primary">Apply & Run</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEYBOARD SHORTCUTS MODAL -->
+  <div id="shortcutsModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">⌨️ Keyboard Shortcuts Reference</h3>
+        <button id="closeShortcutsBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.84rem; font-family: var(--font-code);">
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Spacebar</td><td style="padding: 0.4rem; color: var(--text-muted);">Play / Pause Animation</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">← (Left Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Step Backward</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">→ (Right Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Step Forward</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">↑ (Up Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Increase Speed</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">↓ (Down Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Decrease Speed</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">R</td><td style="padding: 0.4rem; color: var(--text-muted);">Reset Timeline</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Home / End</td><td style="padding: 0.4rem; color: var(--text-muted);">Jump to First / Last Step</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + L</td><td style="padding: 0.4rem; color: var(--text-muted);">Cycle Glassy / Dark / Light Theme</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + [</td><td style="padding: 0.4rem; color: var(--text-muted);">Toggle Left Panel Open / Close</td></tr>
+          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + ]</td><td style="padding: 0.4rem; color: var(--text-muted);">Toggle Right Panel Open / Close</td></tr>
+          <tr><td style="padding: 0.4rem; color: var(--accent-cyan);">Esc</td><td style="padding: 0.4rem; color: var(--text-muted);">Close Modals</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT MODULES -->
+  <script src="js/data/patterns.js"></script>
+  <script src="js/data/problems.js"></script>
+  <script src="js/engine/visualizer.js"></script>
+  <script src="js/engine/stepEngine.js"></script>
+  <script src="js/engine/panelResizer.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
