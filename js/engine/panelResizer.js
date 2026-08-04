@@ -43,19 +43,23 @@ const PanelResizerEngine = {
   setupResizer(resizerElem, panelElem, side) {
     let startX = 0;
     let startWidth = 0;
+    let rAFPending = false;
+    let currentX = 0;
 
     const onMouseDown = (e) => {
       e.preventDefault();
       startX = e.clientX;
+      currentX = e.clientX;
       startWidth = panelElem.getBoundingClientRect().width;
       resizerElem.classList.add("dragging");
+      document.body.classList.add("is-resizing");
 
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     };
 
-    const onMouseMove = (e) => {
-      const dx = e.clientX - startX;
+    const updateWidth = () => {
+      const dx = currentX - startX;
       let newWidth = side === "left" ? startWidth + dx : startWidth - dx;
 
       const minW = 200;
@@ -66,10 +70,21 @@ const PanelResizerEngine = {
 
       if (side === "left") this.leftWidth = newWidth;
       else this.rightWidth = newWidth;
+
+      rAFPending = false;
+    };
+
+    const onMouseMove = (e) => {
+      currentX = e.clientX;
+      if (!rAFPending) {
+        rAFPending = true;
+        requestAnimationFrame(updateWidth);
+      }
     };
 
     const onMouseUp = () => {
       resizerElem.classList.remove("dragging");
+      document.body.classList.remove("is-resizing");
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
     };
@@ -88,20 +103,23 @@ const PanelResizerEngine = {
     resizerElem.addEventListener("touchstart", (e) => {
       const touch = e.touches[0];
       startX = touch.clientX;
+      currentX = touch.clientX;
       startWidth = panelElem.getBoundingClientRect().width;
       resizerElem.classList.add("dragging");
+      document.body.classList.add("is-resizing");
 
       const onTouchMove = (te) => {
         const t = te.touches[0];
-        const dx = t.clientX - startX;
-        let newWidth = side === "left" ? startWidth + dx : startWidth - dx;
-        const maxW = Math.floor(window.innerWidth * 0.7);
-        newWidth = Math.max(200, Math.min(maxW, newWidth));
-        panelElem.style.width = `${newWidth}px`;
+        currentX = t.clientX;
+        if (!rAFPending) {
+          rAFPending = true;
+          requestAnimationFrame(updateWidth);
+        }
       };
 
       const onTouchEnd = () => {
         resizerElem.classList.remove("dragging");
+        document.body.classList.remove("is-resizing");
         document.removeEventListener("touchmove", onTouchMove);
         document.removeEventListener("touchend", onTouchEnd);
       };

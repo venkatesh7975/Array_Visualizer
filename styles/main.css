@@ -12,7 +12,7 @@
   --bg-mesh-3: radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.08) 0%, transparent 60%);
 
   /* Glassmorphism Surfaces */
-  --glass-panel: rgba(13, 18, 30, 0.7);
+  --glass-panel: rgba(13, 18, 30, 0.75);
   --glass-panel-solid: rgba(9, 12, 20, 0.95);
   --glass-card: rgba(19, 27, 44, 0.6);
   --glass-card-hover: rgba(30, 41, 65, 0.8);
@@ -51,7 +51,7 @@
 
   /* Transitions & Shadows */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   --shadow-neon-cyan: 0 0 20px rgba(34, 211, 238, 0.3);
   --shadow-neon-gold: 0 0 20px rgba(251, 191, 36, 0.3);
@@ -100,14 +100,14 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* GLASSY SCROLLBARS */
+/* SILKY GLASSY SCROLLBARS */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(5, 8, 14, 0.4);
+  background: rgba(5, 8, 14, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -252,6 +252,7 @@ body {
   position: relative;
 }
 
+/* GPU HARDWARE ACCELERATED SIDE PANELS */
 .panel-left, .panel-right {
   display: flex;
   flex-direction: column;
@@ -262,7 +263,16 @@ body {
   border-right: 1px solid var(--border-glass);
   box-shadow: var(--shadow-glass);
   z-index: 10;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+  will-change: width;
+  transform: translateZ(0);
+}
+
+/* DISABLE TRANSITION DURING MOUSE RESIZING FOR 60FPS SILKY SMOOTH DRAG */
+body.is-resizing .panel-left,
+body.is-resizing .panel-right {
+  transition: none !important;
+  user-select: none;
 }
 
 .panel-left { width: 340px; min-width: 0; }
@@ -369,14 +379,20 @@ body {
   flex: 1;
   overflow-y: auto;
   padding: 1.25rem;
+  scroll-behavior: smooth;
 }
 
 .tab-content {
   display: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tab-content.active {
   display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* MODAL OVERLAYS */
