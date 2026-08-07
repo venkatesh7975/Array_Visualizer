@@ -105,7 +105,7 @@ const CODE_SOLUTIONS = {
     },
     brute: {
       javascript: `function twoSumBrute(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) return [i, j];\n    }\n  }\n  return [];\n}`,
-      python: `def twoSumBrute(nums: List[int], target: int) -> List[int]:\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]\n    return []`,
+      python: `def twoSumBrute(nums: List[int], target: int) -> List[int]:\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if numbers[i] + numbers[j] == target:\n                return [i, j]\n    return []`,
       java: `public int[] twoSumBrute(int[] nums, int target) {\n    for (int i = 0; i < nums.length; i++) {\n        for (int j = i + 1; j < nums.length; j++) {\n            if (nums[i] + nums[j] == target) return new int[]{i, j};\n        }\n    }\n    return new int[]{};\n}`,
       cpp: `vector<int> twoSumBrute(vector<int>& nums, int target) {\n    for (int i = 0; i < numbers.size(); i++) {\n        for (int j = i + 1; j < numbers.size(); j++) {\n            if (numbers[i] + numbers[j] == target) return {i, j};\n        }\n    }\n    return {};\n}`
     }
@@ -249,6 +249,7 @@ const PROBLEMS_DATA = {
     }
   },
 
+  // Pattern 5: Two Pointers (Two Sum II)
   501: {
     id: 501, patternId: 5, lcNum: 167, title: "Two Sum II - Input Array Is Sorted", difficulty: "Medium", category: "Two Pointers",
     timeComp: "O(N)", spaceComp: "O(1)", defaultInput: [2, 7, 11, 15], defaultTarget: 9,
@@ -291,6 +292,7 @@ const PROBLEMS_DATA = {
     }
   },
 
+  // Pattern 8: HashMap (Two Sum)
   801: {
     id: 801, patternId: 8, lcNum: 1, title: "Two Sum", difficulty: "Easy", category: "HashMap",
     timeComp: "O(N)", spaceComp: "O(N)", defaultInput: [2, 7, 11, 15], defaultTarget: 9,
@@ -395,6 +397,39 @@ const PROBLEMS_DATA = {
     const pId = parseInt(id.slice(0, id.length - 2)) || Math.floor(id / 100);
     const patName = PATTERNS_DATA[pId]?.name || "Array Pattern";
 
+    let codeObj = {
+      optimal: {
+        javascript: `function solveOptimal(nums) {\n  let n = nums.length;\n  let res = [];\n  for (let i = 0; i < n; i++) {\n    res.push(nums[i]);\n  }\n  return res;\n}`,
+        python: `def solveOptimal(nums: List[int]) -> List[int]:\n    n = len(nums)\n    res = []\n    for i in range(n):\n        res.append(nums[i])\n    return res`,
+        java: `public int[] solveOptimal(int[] nums) {\n    int n = nums.length;\n    int[] res = new int[n];\n    for (int i = 0; i < n; i++) {\n        res[i] = nums[i];\n    }\n    return res;\n}`,
+        cpp: `vector<int> solveOptimal(vector<int>& nums) {\n    int n = nums.size();\n    vector<int> res(n);\n    for (int i = 0; i < n; i++) {\n        res[i] = nums[i];\n    }\n    return res;\n}`
+      },
+      brute: {
+        javascript: `function solveBrute(nums) {\n  let n = nums.length;\n  for (let i = 0; i < n; i++) {\n    for (let j = i; j < n; j++) {\n      // Check pair (i, j)\n    }\n  }\n  return nums;\n}`,
+        python: `def solveBrute(nums: List[int]) -> List[int]:\n    n = len(nums)\n    for i in range(n):\n        for j in range(i, n):\n            pass\n    return nums`,
+        java: `public int[] solveBrute(int[] nums) {\n    int n = nums.length;\n    for (int i = 0; i < n; i++) {\n        for (int j = i; j < n; j++) {\n            // Check pair\n        }\n    }\n    return nums;\n}`,
+        cpp: `vector<int> solveBrute(vector<int>& nums) {\n    int n = nums.size();\n    for (int i = 0; i < n; i++) {\n        for (int j = i; j < n; j++) {\n            // Check pair\n        }\n    }\n    return nums;\n}`
+      }
+    };
+
+    // Authentic Multi-Language Code for Pattern 6: Binary Search
+    if (pId === 6) {
+      codeObj = {
+        optimal: {
+          javascript: `function binarySearch(nums, target) {\n  let left = 0, right = nums.length - 1;\n  while (left <= right) {\n    let mid = Math.floor((left + right) / 2);\n    if (nums[mid] === target) return mid;\n    else if (nums[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}`,
+          python: `def binarySearch(nums: List[int], target: int) -> int:\n    left, right = 0, len(nums) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1`,
+          java: `public int binarySearch(int[] nums, int target) {\n    int left = 0, right = nums.length - 1;\n    while (left <= right) {\n        int mid = left + (right - left) / 2;\n        if (nums[mid] == target) return mid;\n        else if (nums[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return -1;\n}`,
+          cpp: `int binarySearch(vector<int>& nums, int target) {\n    int left = 0, right = nums.size() - 1;\n    while (left <= right) {\n        int mid = left + (right - left) / 2;\n        if (nums[mid] == target) return mid;\n        else if (nums[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return -1;\n}`
+        },
+        brute: {
+          javascript: `function linearSearchBrute(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    if (nums[i] === target) return i;\n  }\n  return -1;\n}`,
+          python: `def linearSearchBrute(nums: List[int], target: int) -> int:\n    for i in range(len(nums)):\n        if nums[i] == target:\n            return i\n    return -1`,
+          java: `public int linearSearchBrute(int[] nums, int target) {\n    for (int i = 0; i < nums.length; i++) {\n        if (nums[i] == target) return i;\n    }\n    return -1;\n}`,
+          cpp: `int linearSearchBrute(vector<int>& nums, int target) {\n    for (int i = 0; i < nums.size(); i++) {\n        if (nums[i] == target) return i;\n    }\n    return -1;\n}`
+        }
+      };
+    }
+
     PROBLEMS_DATA[id] = {
       id: parseInt(id),
       patternId: pId,
@@ -405,33 +440,163 @@ const PROBLEMS_DATA = {
       timeComp: pId === 6 ? "O(log N)" : pId === 11 ? "O(N log N)" : "O(N)",
       spaceComp: pId === 8 ? "O(N)" : "O(1)",
       defaultInput: meta.input,
-      defaultTarget: meta.target || null,
+      defaultTarget: meta.target !== undefined ? meta.target : 9,
       statement: `Solve ${meta.title} using the ${patName} approach with full multi-language implementations.`,
       examples: `Input: nums = [${meta.input.join(",")}]\nOutput: Solution for LC #${meta.lc}`,
       constraints: ["1 <= nums.length <= 10^5"],
-      bruteDesc: `Brute force scan of ${meta.title}.`,
-      bruteTime: "O(N²)",
+      bruteDesc: pId === 6 ? "Linear scan O(N) checking elements sequentially." : `Brute force scan of ${meta.title}.`,
+      bruteTime: pId === 6 ? "O(N)" : "O(N²)",
       bruteSpace: "O(1)",
-      optimalDesc: `Optimized solution using ${patName}.`,
+      optimalDesc: pId === 6 ? "Binary Search O(log N) eliminating half of search space each step." : `Optimized solution using ${patName}.`,
       optimalTime: pId === 6 ? "O(log N)" : "O(N)",
       optimalSpace: pId === 8 ? "O(N)" : "O(1)",
-      code: {
-        optimal: {
-          javascript: `function solveOptimal(nums) {\n  let n = nums.length;\n  let res = [];\n  for (let i = 0; i < n; i++) {\n    res.push(nums[i]);\n  }\n  return res;\n}`,
-          python: `def solveOptimal(nums: List[int]) -> List[int]:\n    n = len(nums)\n    res = []\n    for i in range(n):\n        res.append(nums[i])\n    return res`,
-          java: `public int[] solveOptimal(int[] nums) {\n    int n = nums.length;\n    int[] res = new int[n];\n    for (int i = 0; i < n; i++) {\n        res[i] = nums[i];\n    }\n    return res;\n}`,
-          cpp: `vector<int> solveOptimal(vector<int>& nums) {\n    int n = nums.size();\n    vector<int> res(n);\n    for (int i = 0; i < n; i++) {\n        res[i] = nums[i];\n    }\n    return res;\n}`
-        },
-        brute: {
-          javascript: `function solveBrute(nums) {\n  let n = nums.length;\n  for (let i = 0; i < n; i++) {\n    for (let j = i; j < n; j++) {\n      // Check pair (i, j)\n    }\n  }\n  return nums;\n}`,
-          python: `def solveBrute(nums: List[int]) -> List[int]:\n    n = len(nums)\n    for i in range(n):\n        for j in range(i, n):\n            pass\n    return nums`,
-          java: `public int[] solveBrute(int[] nums) {\n    int n = nums.length;\n    for (int i = 0; i < n; i++) {\n        for (int j = i; j < n; j++) {\n            // Check pair\n        }\n    }\n    return nums;\n}`,
-          cpp: `vector<int> solveBrute(vector<int>& nums) {\n    int n = nums.size();\n    for (int i = 0; i < n; i++) {\n        for (int j = i; j < n; j++) {\n            // Check pair\n        }\n    }\n    return nums;\n}`
-        }
-      },
-      generateSteps: (nums, target, mode = "optimal") => {
+      code: codeObj,
+      generateSteps: (nums, targetInput, mode = "optimal") => {
         const steps = [];
+        const targetVal = targetInput !== null && targetInput !== undefined ? targetInput : (meta.target !== undefined ? meta.target : (nums[Math.floor(nums.length / 2)] || 9));
 
+        // Pattern 6: Authentic Binary Search O(log N) Step Generator
+        if (pId === 6) {
+          if (mode === "brute") {
+            steps.push({
+              lineHighlight: 2,
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: {},
+              formula: `BRUTE FORCE: Linear Search O(N)`,
+              explanation: `Sequential scan from index 0 to N-1 for target = ${targetVal}.`,
+              vars: { mode: "Linear Search O(N)" }
+            });
+
+            for (let i = 0; i < nums.length; i++) {
+              const isMatch = nums[i] === targetVal;
+              steps.push({
+                lineHighlight: 3,
+                arrayState: nums.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx === i ? (isMatch ? "active-match" : "active-current") : idx < i ? "active-rejected" : ""
+                })),
+                pointers: { "i": i },
+                formula: `Inspect nums[${i}] = ${nums[i]} vs target (${targetVal})`,
+                explanation: `At index i=${i}: nums[${i}] = ${nums[i]}. ${isMatch ? "MATCH!" : "Not target."}`,
+                vars: { i, "nums[i]": nums[i], target: targetVal }
+              });
+
+              if (isMatch) {
+                steps.push({
+                  lineHighlight: 4,
+                  arrayState: nums.map((v, idx) => ({ val: v, activeClass: idx === i ? "active-match" : "active-rejected" })),
+                  pointers: { "MATCH": i },
+                  formula: `return i (${i})`,
+                  explanation: `Target ${targetVal} found at index ${i}. Returning index ${i}.`,
+                  vars: { result: i, status: "Done" }
+                });
+                return steps;
+              }
+            }
+
+            steps.push({
+              lineHighlight: 6,
+              arrayState: nums.map((v) => ({ val: v, activeClass: "active-rejected" })),
+              pointers: {},
+              formula: `target (${targetVal}) not found -> return -1`,
+              explanation: `Linear search complete. Target ${targetVal} not present in array. Returning -1.`,
+              vars: { result: -1, status: "Done" }
+            });
+          } else {
+            // Binary Search Optimal O(log N)
+            let left = 0, right = nums.length - 1;
+
+            steps.push({
+              lineHighlight: 2,
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: { "L": 0, "R": right },
+              formula: `left = 0, right = ${right}`,
+              explanation: `Initialize left boundary L=0 and right boundary R=${right}. Target = ${targetVal}.`,
+              vars: { left: 0, right, target: targetVal }
+            });
+
+            while (left <= right) {
+              steps.push({
+                lineHighlight: 3,
+                arrayState: nums.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx >= left && idx <= right ? "active-window" : "active-rejected"
+                })),
+                pointers: { "L": left, "R": right },
+                formula: `while (${left} <= ${right})`,
+                explanation: `Search window active between L=${left} and R=${right}. Window size = ${right - left + 1}.`,
+                vars: { left, right, searchSpaceSize: right - left + 1 }
+              });
+
+              let mid = Math.floor((left + right) / 2);
+
+              steps.push({
+                lineHighlight: 4,
+                arrayState: nums.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx === mid ? "active-current" : idx >= left && idx <= right ? "active-window" : "active-rejected"
+                })),
+                pointers: { "L": left, "M": mid, "R": right },
+                formula: `mid = Math.floor((${left} + ${right}) / 2) = ${mid}`,
+                explanation: `Calculated middle index mid=${mid}. Element nums[${mid}] = ${nums[mid]}.`,
+                vars: { left, right, mid, "nums[mid]": nums[mid] }
+              });
+
+              if (nums[mid] === targetVal) {
+                steps.push({
+                  lineHighlight: 5,
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx === mid ? "active-match" : "active-rejected"
+                  })),
+                  pointers: { "MATCH": mid },
+                  formula: `nums[mid=${mid}] (${nums[mid]}) === target (${targetVal})`,
+                  explanation: `Target match found at index ${mid}! Returning index ${mid}.`,
+                  vars: { mid, target: targetVal, result: mid, status: "Done" }
+                });
+                return steps;
+              } else if (nums[mid] < targetVal) {
+                steps.push({
+                  lineHighlight: 6,
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx <= mid ? "active-rejected" : idx >= left && idx <= right ? "active-window" : ""
+                  })),
+                  pointers: { "L": left, "M": mid, "R": right },
+                  formula: `nums[mid] (${nums[mid]}) < target (${targetVal}) -> left = mid + 1 (${mid + 1})`,
+                  explanation: `Element ${nums[mid]} is smaller than target ${targetVal}. Eliminate left half [${left}..${mid}]. Advance L to ${mid + 1}.`,
+                  vars: { left: mid + 1, right, mid, "nums[mid]": nums[mid] }
+                });
+                left = mid + 1;
+              } else {
+                steps.push({
+                  lineHighlight: 7,
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx >= mid ? "active-rejected" : idx >= left && idx <= right ? "active-window" : ""
+                  })),
+                  pointers: { "L": left, "M": mid, "R": right },
+                  formula: `nums[mid] (${nums[mid]}) > target (${targetVal}) -> right = mid - 1 (${mid - 1})`,
+                  explanation: `Element ${nums[mid]} is larger than target ${targetVal}. Eliminate right half [${mid}..${right}]. Reduce R to ${mid - 1}.`,
+                  vars: { left, right: mid - 1, mid, "nums[mid]": nums[mid] }
+                });
+                right = mid - 1;
+              }
+            }
+
+            steps.push({
+              lineHighlight: 9,
+              arrayState: nums.map((v) => ({ val: v, activeClass: "active-rejected" })),
+              pointers: {},
+              formula: `target (${targetVal}) not found -> return -1`,
+              explanation: `Search space exhausted (L > R). Target ${targetVal} not present in array. Returning -1.`,
+              vars: { result: -1, status: "Not Found" }
+            });
+          }
+          return steps;
+        }
+
+        // Generic pattern fallbacks for other auto-generated problems
         if (mode === "brute") {
           steps.push({
             lineHighlight: 2,
