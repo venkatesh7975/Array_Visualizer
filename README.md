@@ -1,4 +1,5 @@
 https://forms.gle/ioUhjArVRN1UrPtt8
+https://forms.gle/1pV4oCQYMo3ZpYBA6
 # 💎 Array Patterns Visualizer — Glassy Premier DSA Masterclass
 
 An interactive, high-performance visual learning platform for **12 Array Data Structure Patterns** and **60 Curated LeetCode Problems**. Features real-time step-by-step array animations, synchronized code tracking across **JavaScript, Python, Java, and C++**, live variable state watch, parallel dry run cards, and pattern mastery quizzes with detailed solution explanations.
