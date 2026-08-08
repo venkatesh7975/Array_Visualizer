@@ -1265,6 +1265,7 @@ const PROBLEMS_DATA = {
       id: parseInt(id),
       patternId: pId,
       lcNum: meta.lc,
+      lc: meta.lc,
       title: meta.title,
       difficulty: meta.diff,
       category: patName,
@@ -1282,8 +1283,9 @@ const PROBLEMS_DATA = {
       optimalTime: pId === 6 ? "O(log N)" : "O(N)",
       optimalSpace: pId === 8 ? "O(N)" : "O(1)",
       code: CODE_SOLUTIONS[id] || (meta.lc === 1480 ? CODE_SOLUTIONS[101] : codeObj),
-      generateSteps: (nums, targetInput, mode = "optimal") => {
+      generateSteps: (numsInput, targetInput, mode = "optimal") => {
         const steps = [];
+        const nums = numsInput || meta.input || [1, 2, 3];
         const targetVal = targetInput !== null && targetInput !== undefined ? targetInput : (meta.target !== undefined ? meta.target : (nums[Math.floor(nums.length / 2)] || 9));
 
         // Pattern 2: Authentic Prefix Sum Step Generator
@@ -1604,57 +1606,11 @@ const PROBLEMS_DATA = {
 
         // Pattern 6: Authentic Binary Search O(log N) Step Generator
         if (pId === 6) {
-          if (mode === "brute") {
-            steps.push({
-              lineHighlight: 2,
-              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
-              pointers: {},
-              formula: `BRUTE FORCE: Linear Search O(N)`,
-              explanation: `Sequential scan from index 0 to N-1 for target = ${targetVal}.`,
-              vars: { mode: "Linear Search O(N)" }
-            });
-
-            for (let i = 0; i < nums.length; i++) {
-              const isMatch = nums[i] === targetVal;
-              steps.push({
-                lineHighlight: 3,
-                arrayState: nums.map((v, idx) => ({
-                  val: v,
-                  activeClass: idx === i ? (isMatch ? "active-match" : "active-current") : idx < i ? "active-rejected" : ""
-                })),
-                pointers: { "i": i },
-                formula: `Inspect nums[${i}] = ${nums[i]} vs target (${targetVal})`,
-                explanation: `At index i=${i}: nums[${i}] = ${nums[i]}. ${isMatch ? "MATCH!" : "Not target."}`,
-                vars: { i, "nums[i]": nums[i], target: targetVal }
-              });
-
-              if (isMatch) {
-                steps.push({
-                  lineHighlight: 4,
-                  arrayState: nums.map((v, idx) => ({ val: v, activeClass: idx === i ? "active-match" : "active-rejected" })),
-                  pointers: { "MATCH": i },
-                  formula: `return i (${i})`,
-                  explanation: `Target ${targetVal} found at index ${i}. Returning index ${i}.`,
-                  vars: { result: i, status: "Done" }
-                });
-                return steps;
-              }
-            }
-
-            steps.push({
-              lineHighlight: 6,
-              arrayState: nums.map((v) => ({ val: v, activeClass: "active-rejected" })),
-              pointers: {},
-              formula: `target (${targetVal}) not found -> return -1`,
-              explanation: `Linear search complete. Target ${targetVal} not present in array. Returning -1.`,
-              vars: { result: -1, status: "Done" }
-            });
-          } else {
-            // Binary Search Optimal O(log N)
+          if (meta.lc === 704) {
+            // LC 704: Binary Search
             let left = 0, right = nums.length - 1;
-
             steps.push({
-              lineHighlight: 2,
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
               arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
               pointers: { "L": 0, "R": right },
               formula: `left = 0, right = ${right}`,
@@ -1663,22 +1619,9 @@ const PROBLEMS_DATA = {
             });
 
             while (left <= right) {
-              steps.push({
-                lineHighlight: 3,
-                arrayState: nums.map((v, idx) => ({
-                  val: v,
-                  activeClass: idx >= left && idx <= right ? "active-window" : "active-rejected"
-                })),
-                pointers: { "L": left, "R": right },
-                formula: `while (${left} <= ${right})`,
-                explanation: `Search window active between L=${left} and R=${right}. Window size = ${right - left + 1}.`,
-                vars: { left, right, searchSpaceSize: right - left + 1 }
-              });
-
               let mid = Math.floor((left + right) / 2);
-
               steps.push({
-                lineHighlight: 4,
+                lineHighlight: { javascript: 4, python: 5, java: 4, cpp: 4 },
                 arrayState: nums.map((v, idx) => ({
                   val: v,
                   activeClass: idx === mid ? "active-current" : idx >= left && idx <= right ? "active-window" : "active-rejected"
@@ -1686,12 +1629,12 @@ const PROBLEMS_DATA = {
                 pointers: { "L": left, "M": mid, "R": right },
                 formula: `mid = Math.floor((${left} + ${right}) / 2) = ${mid}`,
                 explanation: `Calculated middle index mid=${mid}. Element nums[${mid}] = ${nums[mid]}.`,
-                vars: { left, right, mid, "nums[mid]": nums[mid] }
+                vars: { left, right, mid, "nums[mid]": nums[mid], target: targetVal }
               });
 
               if (nums[mid] === targetVal) {
                 steps.push({
-                  lineHighlight: 5,
+                  lineHighlight: { javascript: 5, python: 6, java: 5, cpp: 5 },
                   arrayState: nums.map((v, idx) => ({
                     val: v,
                     activeClass: idx === mid ? "active-match" : "active-rejected"
@@ -1704,7 +1647,7 @@ const PROBLEMS_DATA = {
                 return steps;
               } else if (nums[mid] < targetVal) {
                 steps.push({
-                  lineHighlight: 6,
+                  lineHighlight: { javascript: 6, python: 7, java: 6, cpp: 6 },
                   arrayState: nums.map((v, idx) => ({
                     val: v,
                     activeClass: idx <= mid ? "active-rejected" : idx >= left && idx <= right ? "active-window" : ""
@@ -1717,7 +1660,7 @@ const PROBLEMS_DATA = {
                 left = mid + 1;
               } else {
                 steps.push({
-                  lineHighlight: 7,
+                  lineHighlight: { javascript: 7, python: 8, java: 7, cpp: 7 },
                   arrayState: nums.map((v, idx) => ({
                     val: v,
                     activeClass: idx >= mid ? "active-rejected" : idx >= left && idx <= right ? "active-window" : ""
@@ -1732,15 +1675,332 @@ const PROBLEMS_DATA = {
             }
 
             steps.push({
-              lineHighlight: 9,
+              lineHighlight: { javascript: 9, python: 9, java: 9, cpp: 9 },
               arrayState: nums.map((v) => ({ val: v, activeClass: "active-rejected" })),
               pointers: {},
               formula: `target (${targetVal}) not found -> return -1`,
               explanation: `Search space exhausted (L > R). Target ${targetVal} not present in array. Returning -1.`,
               vars: { result: -1, status: "Not Found" }
             });
+            return steps;
+          } else if (meta.lc === 35) {
+            // LC 35: Search Insert Position
+            let left = 0, right = nums.length - 1;
+            steps.push({
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: { "L": 0, "R": right },
+              formula: `left = 0, right = ${right}`,
+              explanation: `Initialize left boundary L=0 and right boundary R=${right}. Target to insert = ${targetVal}.`,
+              vars: { left: 0, right, target: targetVal }
+            });
+
+            while (left <= right) {
+              let mid = Math.floor((left + right) / 2);
+              steps.push({
+                lineHighlight: { javascript: 4, python: 5, java: 4, cpp: 4 },
+                arrayState: nums.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx === mid ? "active-current" : idx >= left && idx <= right ? "active-window" : "active-rejected"
+                })),
+                pointers: { "L": left, "M": mid, "R": right },
+                formula: `mid = Math.floor((${left} + ${right}) / 2) = ${mid}`,
+                explanation: `Inspect mid index mid=${mid} (val=${nums[mid]}). Compare with target ${targetVal}.`,
+                vars: { left, right, mid, "nums[mid]": nums[mid], target: targetVal }
+              });
+
+              if (nums[mid] === targetVal) {
+                steps.push({
+                  lineHighlight: { javascript: 5, python: 6, java: 5, cpp: 5 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx === mid ? "active-match" : "active-rejected"
+                  })),
+                  pointers: { "MATCH": mid },
+                  formula: `nums[mid=${mid}] (${nums[mid]}) === target (${targetVal})`,
+                  explanation: `Target ${targetVal} already exists at index ${mid}. Returning insert index ${mid}.`,
+                  vars: { result: mid, status: "Found" }
+                });
+                return steps;
+              } else if (nums[mid] < targetVal) {
+                steps.push({
+                  lineHighlight: { javascript: 6, python: 7, java: 6, cpp: 6 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx <= mid ? "active-rejected" : idx >= left && idx <= right ? "active-window" : ""
+                  })),
+                  pointers: { "L": left, "M": mid, "R": right },
+                  formula: `nums[mid] (${nums[mid]}) < target (${targetVal}) -> left = mid + 1 (${mid + 1})`,
+                  explanation: `nums[${mid}] (${nums[mid]}) < target (${targetVal}). Advance left boundary L to ${mid + 1}.`,
+                  vars: { left: mid + 1, right, mid, "nums[mid]": nums[mid] }
+                });
+                left = mid + 1;
+              } else {
+                steps.push({
+                  lineHighlight: { javascript: 7, python: 8, java: 7, cpp: 7 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx >= mid ? "active-rejected" : idx >= left && idx <= right ? "active-window" : ""
+                  })),
+                  pointers: { "L": left, "M": mid, "R": right },
+                  formula: `nums[mid] (${nums[mid]}) > target (${targetVal}) -> right = mid - 1 (${mid - 1})`,
+                  explanation: `nums[${mid}] (${nums[mid]}) > target (${targetVal}). Reduce right boundary R to ${mid - 1}.`,
+                  vars: { left, right: mid - 1, mid, "nums[mid]": nums[mid] }
+                });
+                right = mid - 1;
+              }
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 9, python: 9, java: 9, cpp: 9 },
+              arrayState: nums.map((v, idx) => ({
+                val: v,
+                activeClass: idx === left ? "active-match" : "active-rejected"
+              })),
+              pointers: { "INSERT": left },
+              formula: `Search space complete -> return left (${left})`,
+              explanation: `Target ${targetVal} not found in array. Correct insert position is index ${left}. Returning ${left}.`,
+              vars: { result: left, status: "Insert Position Computed" }
+            });
+            return steps;
+          } else if (meta.lc === 162) {
+            // LC 162: Find Peak Element
+            let left = 0, right = nums.length - 1;
+            steps.push({
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: { "L": 0, "R": right },
+              formula: `left = 0, right = ${right}`,
+              explanation: `Initialize left L=0 and right R=${right} for peak element binary search.`,
+              vars: { left: 0, right }
+            });
+
+            while (left < right) {
+              let mid = Math.floor((left + right) / 2);
+              const isRising = nums[mid] < nums[mid + 1];
+
+              steps.push({
+                lineHighlight: { javascript: 4, python: 5, java: 4, cpp: 4 },
+                arrayState: nums.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx === mid || idx === mid + 1 ? "active-current" : idx >= left && idx <= right ? "active-window" : "active-rejected"
+                })),
+                pointers: { "L": left, "M": mid, "R": right },
+                formula: `mid = ${mid}: nums[${mid}] (${nums[mid]}) vs nums[${mid+1}] (${nums[mid+1]})`,
+                explanation: `At mid=${mid}: Compare nums[${mid}] (${nums[mid]}) with adjacent right element nums[${mid+1}] (${nums[mid+1]}). ${isRising ? "Rising slope -> Peak is on right half!" : "Falling slope -> Peak is on left half or at mid."}`,
+                vars: { left, right, mid, "nums[mid]": nums[mid], "nums[mid+1]": nums[mid + 1] }
+              });
+
+              if (isRising) {
+                steps.push({
+                  lineHighlight: { javascript: 5, python: 7, java: 5, cpp: 5 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx <= mid ? "active-rejected" : idx >= left && idx <= right ? "active-window" : ""
+                  })),
+                  pointers: { "L": mid + 1, "R": right },
+                  formula: `nums[mid] < nums[mid+1] -> left = mid + 1 (${mid + 1})`,
+                  explanation: `Rising slope detected. Peak must be strictly on the right side. Set left = ${mid + 1}.`,
+                  vars: { left: mid + 1, right, mid }
+                });
+                left = mid + 1;
+              } else {
+                steps.push({
+                  lineHighlight: { javascript: 6, python: 9, java: 6, cpp: 6 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx > mid ? "active-rejected" : idx >= left && idx <= right ? "active-window" : ""
+                  })),
+                  pointers: { "L": left, "R": mid },
+                  formula: `nums[mid] >= nums[mid+1] -> right = mid (${mid})`,
+                  explanation: `Falling slope detected. Peak lies at or to the left of mid. Set right = ${mid}.`,
+                  vars: { left, right: mid, mid }
+                });
+                right = mid;
+              }
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 8, python: 10, java: 8, cpp: 8 },
+              arrayState: nums.map((v, idx) => ({
+                val: v,
+                activeClass: idx === left ? "active-match" : "active-rejected"
+              })),
+              pointers: { "PEAK": left },
+              formula: `left === right (${left}) -> return left`,
+              explanation: `Binary search converged at index ${left} (val=${nums[left]}). Element at index ${left} is a local peak! Returning ${left}.`,
+              vars: { peakIndex: left, peakValue: nums[left], status: "Done" }
+            });
+            return steps;
+          } else if (meta.lc === 33) {
+            // LC 33: Search in Rotated Sorted Array
+            let left = 0, right = nums.length - 1;
+            steps.push({
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: { "L": 0, "R": right },
+              formula: `left = 0, right = ${right}`,
+              explanation: `Initialize left L=0 and right R=${right} on rotated sorted array. Target = ${targetVal}.`,
+              vars: { left: 0, right, target: targetVal }
+            });
+
+            while (left <= right) {
+              let mid = Math.floor((left + right) / 2);
+              const isMatch = nums[mid] === targetVal;
+
+              steps.push({
+                lineHighlight: { javascript: 4, python: 5, java: 4, cpp: 4 },
+                arrayState: nums.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx === mid ? (isMatch ? "active-match" : "active-current") : idx >= left && idx <= right ? "active-window" : "active-rejected"
+                })),
+                pointers: { "L": left, "M": mid, "R": right },
+                formula: `mid = Math.floor((${left} + ${right}) / 2) = ${mid}`,
+                explanation: `Inspect mid index mid=${mid} (val=${nums[mid]}). ${isMatch ? "MATCH FOUND!" : "Checking which half is sorted."}`,
+                vars: { left, right, mid, "nums[mid]": nums[mid], target: targetVal }
+              });
+
+              if (isMatch) {
+                steps.push({
+                  lineHighlight: { javascript: 5, python: 6, java: 5, cpp: 5 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx === mid ? "active-match" : "active-rejected"
+                  })),
+                  pointers: { "MATCH": mid },
+                  formula: `nums[mid=${mid}] (${nums[mid]}) === target (${targetVal})`,
+                  explanation: `Found target ${targetVal} at index ${mid}! Returning index ${mid}.`,
+                  vars: { result: mid, status: "Done" }
+                });
+                return steps;
+              }
+
+              const leftSorted = nums[left] <= nums[mid];
+              if (leftSorted) {
+                const inLeftHalf = targetVal >= nums[left] && targetVal < nums[mid];
+                steps.push({
+                  lineHighlight: { javascript: 6, python: 7, java: 6, cpp: 6 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: inLeftHalf ? (idx >= left && idx < mid ? "active-window" : "active-rejected") : (idx > mid && idx <= right ? "active-window" : "active-rejected")
+                  })),
+                  pointers: { "L": left, "M": mid, "R": right },
+                  formula: `Left half [${left}..${mid}] is sorted (${nums[left]} <= ${nums[mid]})`,
+                  explanation: `Left subarray [${nums[left]}..${nums[mid]}] is strictly sorted. Target ${targetVal} is ${inLeftHalf ? "within" : "outside"} range [${nums[left]}..${nums[mid]}]. Adjusting search window.`,
+                  vars: { leftSorted: true, inLeftHalf, left, right, mid }
+                });
+
+                if (inLeftHalf) right = mid - 1;
+                else left = mid + 1;
+              } else {
+                const inRightHalf = targetVal > nums[mid] && targetVal <= nums[right];
+                steps.push({
+                  lineHighlight: { javascript: 9, python: 10, java: 9, cpp: 9 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: inRightHalf ? (idx > mid && idx <= right ? "active-window" : "active-rejected") : (idx >= left && idx < mid ? "active-window" : "active-rejected")
+                  })),
+                  pointers: { "L": left, "M": mid, "R": right },
+                  formula: `Right half [${mid}..${right}] is sorted (${nums[mid]} <= ${nums[right]})`,
+                  explanation: `Right subarray [${nums[mid]}..${nums[right]}] is strictly sorted. Target ${targetVal} is ${inRightHalf ? "within" : "outside"} range [${nums[mid]}..${nums[right]}]. Adjusting search window.`,
+                  vars: { leftSorted: false, inRightHalf, left, right, mid }
+                });
+
+                if (inRightHalf) left = mid + 1;
+                else right = mid - 1;
+              }
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 14, python: 12, java: 14, cpp: 14 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "active-rejected" })),
+              pointers: {},
+              formula: `target (${targetVal}) not found -> return -1`,
+              explanation: `Search space exhausted. Target ${targetVal} not present in rotated array. Returning -1.`,
+              vars: { result: -1, status: "Not Found" }
+            });
+            return steps;
+          } else if (meta.lc === 875) {
+            // LC 875: Koko Eating Bananas
+            let maxPile = Math.max(...nums);
+            let left = 1, right = maxPile;
+            const h = targetVal || 8; // targetVal is h (max hours)
+
+            steps.push({
+              lineHighlight: { javascript: 2, python: 4, java: 3, cpp: 2 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: {},
+              auxState: {
+                outputArray: [
+                  { val: `Bananas: [${nums.join(', ')}]`, activeClass: "active-window" },
+                  { val: `Hours Available (H): ${h}`, activeClass: "active-match" },
+                  { val: `Speed Range: [1..${maxPile}]`, activeClass: "active-current" }
+                ],
+                outputTitle: `🍌 KOKO EATING BANANAS SETUP`
+              },
+              formula: `Binary Search eating speed k in range [1..${maxPile}]`,
+              explanation: `Koko must finish all banana piles within H=${h} hours. We binary search candidate eating speed k from 1 to max(piles)=${maxPile}.`,
+              vars: { left: 1, right: maxPile, h }
+            });
+
+            while (left < right) {
+              let mid = Math.floor((left + right) / 2);
+              let totalHours = 0;
+              const hoursPerPile = nums.map((p) => {
+                const hrs = Math.ceil(p / mid);
+                totalHours += hrs;
+                return hrs;
+              });
+
+              const isFeasible = totalHours <= h;
+
+              steps.push({
+                lineHighlight: { javascript: 4, python: 6, java: 5, cpp: 4 },
+                arrayState: nums.map((v, idx) => ({
+                  val: `${v} (${hoursPerPile[idx]}h)`,
+                  activeClass: isFeasible ? "active-match" : "active-current"
+                })),
+                pointers: {},
+                auxState: {
+                  outputArray: [
+                    { val: `Candidate Speed k = ${mid}`, activeClass: "active-current" },
+                    { val: `Total Hours Needed = ${totalHours}`, activeClass: isFeasible ? "active-match" : "active-rejected" },
+                    { val: `Max Allowed H = ${h}`, activeClass: "active-window" },
+                    { val: `Status: ${isFeasible ? "FEASIBLE (Can try slower speed)" : "TOO SLOW (Must eat faster)"}`, activeClass: isFeasible ? "active-match" : "active-rejected" }
+                  ],
+                  outputTitle: `⏱️ EATING HOUR CALCULATION AT SPEED k=${mid}`
+                },
+                formula: `Speed k=${mid}: Total Hours = ${totalHours} vs Max Allowed H=${h}`,
+                explanation: `Testing speed k=${mid} bananas/hour: Total hours needed = ${totalHours}. ${isFeasible ? `Feasible (${totalHours} <= ${h})! Reducing speed range to [${left}..${mid}].` : `Too slow (${totalHours} > ${h})! Increasing speed range to [${mid+1}..${right}].`}`,
+                vars: { speed_k: mid, totalHours, h, isFeasible, left, right }
+              });
+
+              if (isFeasible) {
+                right = mid;
+              } else {
+                left = mid + 1;
+              }
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 10, python: 10, java: 11, cpp: 10 },
+              arrayState: nums.map((v) => ({
+                val: v,
+                activeClass: "active-match"
+              })),
+              pointers: {},
+              auxState: {
+                outputArray: [
+                  { val: `MINIMUM SPEED k = ${left}`, activeClass: "active-match" }
+                ],
+                outputTitle: `🏆 OPTIMAL MINIMUM EATING SPEED FOUND`
+              },
+              formula: `return left (${left})`,
+              explanation: `Binary search converged on minimum speed k=${left} bananas/hour to finish all bananas within ${h} hours. Returning ${left}.`,
+              vars: { minSpeed: left, status: "Done" }
+            });
+            return steps;
           }
-          return steps;
         }
 
         // Generic pattern fallbacks for other auto-generated problems
