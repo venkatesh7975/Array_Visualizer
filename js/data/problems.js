@@ -896,8 +896,8 @@ const PROBLEMS_DATA = {
     bruteDesc: "Nested double loop scan.", bruteTime: "O(N²)", bruteSpace: "O(1)",
     optimalDesc: "Inward two pointers L=0, R=N-1.", optimalTime: "O(N)", optimalSpace: "O(1)",
     code: CODE_SOLUTIONS[501],
-    generateSteps: (numbers, targetInput, mode = "optimal") => {
-      const target = targetInput || 9; const steps = [];
+    generateSteps: (numbersInput, targetInput, mode = "optimal") => {
+      const numbers = numbersInput || [2, 7, 11, 15]; const target = targetInput || 9; const steps = [];
       if (mode === "brute") {
         steps.push({ lineHighlight: 1, arrayState: numbers.map(v => ({ val: v, activeClass: "" })), pointers: {}, formula: "BRUTE FORCE: Double Loop Scan O(N²)", explanation: "Check all pairs (i, j).", vars: { mode: "Brute Force O(N²)" } });
         for (let i = 0; i < numbers.length; i++) {
@@ -939,8 +939,8 @@ const PROBLEMS_DATA = {
     bruteDesc: "Nested double loop scan.", bruteTime: "O(N²)", bruteSpace: "O(1)",
     optimalDesc: "Single pass HashMap complement lookup.", optimalTime: "O(N)", optimalSpace: "O(N)",
     code: CODE_SOLUTIONS[801],
-    generateSteps: (nums, targetInput, mode = "optimal") => {
-      const target = targetInput || 9; const steps = [];
+    generateSteps: (numsInput, targetInput, mode = "optimal") => {
+      const nums = numsInput || [2, 7, 11, 15]; const target = targetInput || 9; const steps = [];
       if (mode === "brute") {
         steps.push({ lineHighlight: 1, arrayState: nums.map(v => ({ val: v, activeClass: "" })), pointers: {}, formula: "BRUTE FORCE: Double Loop Scan O(N²)", explanation: "Check all pairs (i, j).", vars: { mode: "Brute Force O(N²)" } });
         for (let i = 0; i < nums.length; i++) {
@@ -1600,6 +1600,313 @@ const PROBLEMS_DATA = {
               vars: { result: `[${prefixArr.join(", ")}]`, status: "Done" }
             });
 
+            return steps;
+          }
+        }
+
+        // Pattern 5: Authentic Two Pointers Step Generator
+        if (pId === 5) {
+          if (meta.lc === 283) {
+            // LC 283: Move Zeroes
+            const arr = [...nums];
+            let write = 0;
+
+            steps.push({
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
+              arrayState: arr.map((v) => ({ val: v, activeClass: "" })),
+              pointers: { "write": 0 },
+              formula: "write = 0",
+              explanation: "Initialize write pointer at index 0 to track the position for the next non-zero element.",
+              vars: { write: 0, read: 0 }
+            });
+
+            for (let read = 0; read < arr.length; read++) {
+              const isNonZero = arr[read] !== 0;
+
+              steps.push({
+                lineHighlight: { javascript: 4, python: 5, java: 4, cpp: 4 },
+                arrayState: arr.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx === read ? (isNonZero ? "active-current" : "active-rejected") : idx === write ? "active-window" : ""
+                })),
+                pointers: { "write": write, "read": read },
+                formula: `nums[read=${read}] (${arr[read]}) ${isNonZero ? "!== 0" : "=== 0"}`,
+                explanation: `Inspect arr[read=${read}] = ${arr[read]}. ${isNonZero ? `Non-zero found! Swap arr[${write}] and arr[${read}].` : "Zero element. Skip write increment."}`,
+                vars: { write, read, "arr[read]": arr[read], isNonZero }
+              });
+
+              if (isNonZero) {
+                // Swap arr[write] and arr[read]
+                let temp = arr[write];
+                arr[write] = arr[read];
+                arr[read] = temp;
+
+                steps.push({
+                  lineHighlight: { javascript: 5, python: 6, java: 5, cpp: 5 },
+                  arrayState: arr.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx === write ? "active-match" : idx === read ? "active-current" : ""
+                  })),
+                  pointers: { "write": write, "read": read },
+                  formula: `Swap arr[${write}] (${arr[write]}) and arr[${read}] (${arr[read]}) -> write++ (${write + 1})`,
+                  explanation: `Swapped non-zero element ${arr[write]} into write index ${write}. Advance write to ${write + 1}.`,
+                  vars: { write: write + 1, read, swappedVal: arr[write] }
+                });
+                write++;
+              }
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 9, python: 7, java: 9, cpp: 9 },
+              arrayState: arr.map((v, idx) => ({
+                val: v,
+                activeClass: idx < write ? "active-match" : "active-rejected"
+              })),
+              pointers: { "write": write },
+              formula: `Completed Move Zeroes: [${arr.join(", ")}]`,
+              explanation: `All non-zero elements successfully moved to the front! All zeros pushed to the right. Result: [${arr.join(", ")}].`,
+              vars: { result: `[${arr.join(", ")}]`, nonZeroCount: write, status: "Done" }
+            });
+            return steps;
+          } else if (meta.lc === 167) {
+            // LC 167: Two Sum II (Sorted Array)
+            let left = 0, right = nums.length - 1;
+            steps.push({
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: { "L": 0, "R": right },
+              formula: `left = 0, right = ${right}`,
+              explanation: `Initialize left pointer L=0 and right pointer R=${right}. Target = ${targetVal}.`,
+              vars: { left: 0, right, target: targetVal }
+            });
+
+            while (left < right) {
+              let sum = nums[left] + nums[right];
+              const isMatch = sum === targetVal;
+
+              steps.push({
+                lineHighlight: { javascript: 4, python: 5, java: 4, cpp: 4 },
+                arrayState: nums.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx === left || idx === right ? (isMatch ? "active-match" : "active-current") : idx > left && idx < right ? "active-window" : ""
+                })),
+                pointers: { "L": left, "R": right },
+                formula: `nums[${left}] (${nums[left]}) + nums[${right}] (${nums[right]}) = ${sum} vs target (${targetVal})`,
+                explanation: `Calculate sum of elements at L=${left} (${nums[left]}) and R=${right} (${nums[right]}): sum = ${sum}. ${isMatch ? "MATCH FOUND!" : sum < targetVal ? "Sum is too small -> Advance L." : "Sum is too large -> Reduce R."}`,
+                vars: { left, right, sum, target: targetVal }
+              });
+
+              if (isMatch) {
+                steps.push({
+                  lineHighlight: { javascript: 5, python: 6, java: 5, cpp: 5 },
+                  arrayState: nums.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx === left || idx === right ? "active-match" : ""
+                  })),
+                  pointers: { "L+1": left + 1, "R+1": right + 1 },
+                  formula: `return [${left + 1}, ${right + 1}] (1-based indices)`,
+                  explanation: `Found target sum ${targetVal}! Returning 1-based indices [${left + 1}, ${right + 1}].`,
+                  vars: { result: `[${left + 1}, ${right + 1}]`, status: "Done" }
+                });
+                return steps;
+              } else if (sum < targetVal) {
+                left++;
+              } else {
+                right--;
+              }
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 9, python: 11, java: 9, cpp: 9 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "active-rejected" })),
+              pointers: {},
+              formula: `No valid pair found for target ${targetVal}`,
+              explanation: `Search complete. No two elements sum to ${targetVal}.`,
+              vars: { result: "[]", status: "Not Found" }
+            });
+            return steps;
+          } else if (meta.lc === 11) {
+            // LC 11: Container With Most Water
+            let left = 0, right = nums.length - 1;
+            let maxArea = 0;
+
+            steps.push({
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: { "L": 0, "R": right },
+              formula: `left = 0, right = ${right}, maxArea = 0`,
+              explanation: `Initialize container boundaries L=0 (h=${nums[0]}) and R=${right} (h=${nums[right]}).`,
+              vars: { left: 0, right, maxArea: 0 }
+            });
+
+            while (left < right) {
+              let h = Math.min(nums[left], nums[right]);
+              let w = right - left;
+              let area = h * w;
+              maxArea = Math.max(maxArea, area);
+
+              steps.push({
+                lineHighlight: { javascript: 4, python: 5, java: 4, cpp: 4 },
+                arrayState: nums.map((v, idx) => ({
+                  val: v,
+                  activeClass: idx === left || idx === right ? "active-match" : idx > left && idx < right ? "active-window" : ""
+                })),
+                pointers: { "L": left, "R": right },
+                auxState: {
+                  outputArray: [
+                    { val: `Width: ${w}`, activeClass: "active-window" },
+                    { val: `Effective Height: ${h}`, activeClass: "active-current" },
+                    { val: `Current Area: ${area}`, activeClass: "active-match" },
+                    { val: `Max Area So Far: ${maxArea}`, activeClass: "active-match" }
+                  ],
+                  outputTitle: `💧 CONTAINER WATER AREA CALCULATOR`
+                },
+                formula: `area = min(${nums[left]}, ${nums[right]}) * (${right} - ${left}) = ${h} * ${w} = ${area}`,
+                explanation: `Container bounded by L=${left} (h=${nums[left]}) and R=${right} (h=${nums[right]}): area = ${area}. Max area = ${maxArea}.`,
+                vars: { left, right, height: h, width: w, area, maxArea }
+              });
+
+              if (nums[left] < nums[right]) left++;
+              else right--;
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 7, python: 8, java: 7, cpp: 7 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "active-match" })),
+              pointers: {},
+              auxState: {
+                outputArray: [{ val: `MAXIMUM CONTAINER AREA = ${maxArea}`, activeClass: "active-match" }],
+                outputTitle: `🏆 MAXIMUM WATER CONTAINER AREA`
+              },
+              formula: `return maxArea (${maxArea})`,
+              explanation: `Two-pointer search complete. Maximum water container area = ${maxArea}.`,
+              vars: { maxArea, status: "Done" }
+            });
+            return steps;
+          } else if (meta.lc === 15) {
+            // LC 15: 3Sum
+            const arr = [...nums].sort((a, b) => a - b);
+            const res = [];
+
+            steps.push({
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
+              arrayState: arr.map((v) => ({ val: v, activeClass: "" })),
+              pointers: {},
+              formula: `Sort input array -> [${arr.join(", ")}]`,
+              explanation: `Sorted array in ascending order to enable two-pointer triplet search.`,
+              vars: { sortedArray: `[${arr.join(", ")}]` }
+            });
+
+            for (let i = 0; i < arr.length - 2; i++) {
+              if (i > 0 && arr[i] === arr[i - 1]) continue;
+              let left = i + 1, right = arr.length - 1;
+
+              while (left < right) {
+                let sum = arr[i] + arr[left] + arr[right];
+                const isMatch = sum === 0;
+
+                steps.push({
+                  lineHighlight: { javascript: 8, python: 8, java: 8, cpp: 8 },
+                  arrayState: arr.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx === i ? "active-current" : idx === left || idx === right ? (isMatch ? "active-match" : "active-window") : ""
+                  })),
+                  pointers: { "i": i, "L": left, "R": right },
+                  formula: `arr[${i}] (${arr[i]}) + arr[${left}] (${arr[left]}) + arr[${right}] (${arr[right]}) = ${sum}`,
+                  explanation: `Inspecting triplet at i=${i} (${arr[i]}), L=${left} (${arr[left]}), R=${right} (${arr[right]}): sum = ${sum}. ${isMatch ? "TRIPLET FOUND!" : sum < 0 ? "Sum < 0 -> Move L right." : "Sum > 0 -> Move R left."}`,
+                  vars: { i, left, right, sum, tripletsFound: res.length }
+                });
+
+                if (isMatch) {
+                  res.push([arr[i], arr[left], arr[right]]);
+                  while (left < right && arr[left] === arr[left + 1]) left++;
+                  while (left < right && arr[right] === arr[right - 1]) right--;
+                  left++; right--;
+                } else if (sum < 0) {
+                  left++;
+                } else {
+                  right--;
+                }
+              }
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 17, python: 15, java: 17, cpp: 17 },
+              arrayState: arr.map((v) => ({ val: v, activeClass: "active-match" })),
+              pointers: {},
+              formula: `3Sum Complete -> Output: ${JSON.stringify(res)}`,
+              explanation: `Found all unique triplets summing to 0: ${JSON.stringify(res)}.`,
+              vars: { result: JSON.stringify(res), status: "Done" }
+            });
+            return steps;
+          } else if (meta.lc === 42) {
+            // LC 42: Trapping Rain Water
+            let left = 0, right = nums.length - 1;
+            let maxL = 0, maxR = 0, totalWater = 0;
+
+            steps.push({
+              lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "" })),
+              pointers: { "L": 0, "R": right },
+              formula: `left = 0, right = ${right}, maxL = 0, maxR = 0, water = 0`,
+              explanation: `Initialize two pointers L=0 and R=${right} for trapped rain water calculation.`,
+              vars: { left: 0, right, maxL: 0, maxR: 0, totalWater: 0 }
+            });
+
+            while (left < right) {
+              if (nums[left] < nums[right]) {
+                if (nums[left] >= maxL) {
+                  maxL = nums[left];
+                } else {
+                  const trapped = maxL - nums[left];
+                  totalWater += trapped;
+                  steps.push({
+                    lineHighlight: { javascript: 7, python: 8, java: 7, cpp: 7 },
+                    arrayState: nums.map((v, idx) => ({
+                      val: idx === left ? `${v} (+${trapped}💧)` : v,
+                      activeClass: idx === left ? "active-match" : idx === right ? "active-window" : ""
+                    })),
+                    pointers: { "L": left, "R": right },
+                    formula: `maxL (${maxL}) - height[L=${left}] (${nums[left]}) = ${trapped} water trapped`,
+                    explanation: `At L=${left} (height=${nums[left]}): Trapped ${trapped} unit(s) of water! Total water = ${totalWater}.`,
+                    vars: { left, right, maxL, maxR, trapped, totalWater }
+                  });
+                }
+                left++;
+              } else {
+                if (nums[right] >= maxR) {
+                  maxR = nums[right];
+                } else {
+                  const trapped = maxR - nums[right];
+                  totalWater += trapped;
+                  steps.push({
+                    lineHighlight: { javascript: 12, python: 13, java: 12, cpp: 12 },
+                    arrayState: nums.map((v, idx) => ({
+                      val: idx === right ? `${v} (+${trapped}💧)` : v,
+                      activeClass: idx === right ? "active-match" : idx === left ? "active-window" : ""
+                    })),
+                    pointers: { "L": left, "R": right },
+                    formula: `maxR (${maxR}) - height[R=${right}] (${nums[right]}) = ${trapped} water trapped`,
+                    explanation: `At R=${right} (height=${nums[right]}): Trapped ${trapped} unit(s) of water! Total water = ${totalWater}.`,
+                    vars: { left, right, maxL, maxR, trapped, totalWater }
+                  });
+                }
+                right--;
+              }
+            }
+
+            steps.push({
+              lineHighlight: { javascript: 16, python: 15, java: 16, cpp: 16 },
+              arrayState: nums.map((v) => ({ val: v, activeClass: "active-match" })),
+              pointers: {},
+              auxState: {
+                outputArray: [{ val: `TOTAL TRAPPED RAIN WATER = ${totalWater} Units`, activeClass: "active-match" }],
+                outputTitle: `🌧️ TRAPPED RAIN WATER RESULT`
+              },
+              formula: `return totalWater (${totalWater})`,
+              explanation: `Trapped rain water calculation complete. Total trapped water = ${totalWater} units.`,
+              vars: { totalWater, status: "Done" }
+            });
             return steps;
           }
         }
