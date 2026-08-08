@@ -39,22 +39,44 @@ const VisualizerEngine = {
   renderStep(step, totalSteps, problem) {
     if (!step) return;
 
+    const isFinal = step.stepNum === totalSteps - 1;
+    const resVal = step.vars ? (step.vars.result !== undefined ? step.vars.result : (step.vars.output !== undefined ? step.vars.output : step.vars.pivotIndex)) : undefined;
+
     // 1. Update Step Badges & Formula
     if (this.stepCounterBadge) {
-      this.stepCounterBadge.textContent = `Step ${step.stepNum || 0} / ${totalSteps - 1}`;
+      this.stepCounterBadge.textContent = isFinal ? `Step ${step.stepNum || 0} / ${totalSteps - 1} (COMPLETED)` : `Step ${step.stepNum || 0} / ${totalSteps - 1}`;
+      this.stepCounterBadge.className = isFinal ? "badge badge-easy" : "badge badge-info";
     }
     if (this.formulaText) {
-      this.formulaText.textContent = step.formula || "Executing step...";
+      if (isFinal && resVal !== undefined) {
+        const displayRes = typeof resVal === "object" ? JSON.stringify(resVal) : String(resVal);
+        this.formulaText.innerHTML = `<span style="color: var(--accent-green); font-weight: 900;">🏆 FINAL RESULT: ${this.escapeHtml(displayRes)}</span>`;
+      } else {
+        this.formulaText.textContent = step.formula || "Executing step...";
+      }
     }
     if (this.explanationText) {
-      this.explanationText.textContent = step.explanation || "";
+      if (isFinal && resVal !== undefined) {
+        const displayRes = typeof resVal === "object" ? JSON.stringify(resVal) : String(resVal);
+        this.explanationText.innerHTML = `<span style="color: var(--accent-green); font-weight: 800;">Execution Completed!</span> Computed Correct Output: <code style="color: var(--accent-gold); font-size: 0.95rem; font-weight: 900; background: rgba(251, 191, 36, 0.15); padding: 0.15rem 0.5rem; border-radius: 6px;">${this.escapeHtml(displayRes)}</code>. ${this.escapeHtml(step.explanation || "")}`;
+      } else {
+        this.explanationText.textContent = step.explanation || "";
+      }
     }
 
-    // 2. Render 1D Array Canvas
-    this.renderArray(step.arrayState || [], step.pointers || {}, step.window);
+    // 2. Render 1D Array or 2D Matrix Canvas
+    if (step.matrixState) {
+      if (this.arrayContainer) this.arrayContainer.style.display = "none";
+      if (this.matrixContainer) this.matrixContainer.style.display = "flex";
+      this.renderMatrix(step.matrixState, step.pointers || {}, step.matrixConfig || {});
+    } else {
+      if (this.matrixContainer) this.matrixContainer.style.display = "none";
+      if (this.arrayContainer) this.arrayContainer.style.display = "flex";
+      this.renderArray(step.arrayState || [], step.pointers || {}, step.window);
+    }
 
-    // 3. Render Aux Structures (HashMap / Prefix)
-    this.renderAux(step.auxState || {});
+    // 3. Render Aux Structures (HashMap / Output Array / Running Totals / Final Result Card)
+    this.renderAux(step.auxState || {}, step, isFinal);
 
     // 4. Render Synchronized Code Line Highlight for Current Approach Mode
     const activeMode = problem.currentMode || "optimal";
@@ -131,11 +153,121 @@ const VisualizerEngine = {
     });
   },
 
-  renderAux(auxState) {
+  renderMatrix(matrixState, pointers, config) {
+    if (!this.matrixContainer) return;
+    this.matrixContainer.innerHTML = "";
+
+    const gridDiv = document.createElement("div");
+    gridDiv.className = "matrix-grid-wrapper";
+
+    if (config.title) {
+      const gridTitle = document.createElement("div");
+      gridTitle.className = "matrix-title";
+      gridTitle.textContent = config.title;
+      gridDiv.appendChild(gridTitle);
+    }
+
+    const table = document.createElement("div");
+    table.className = "matrix-grid-table";
+
+    matrixState.forEach((rowObj, rIdx) => {
+      const rowDiv = document.createElement("div");
+      rowDiv.className = `matrix-row ${rowObj.rowClass || ""}`;
+
+      const rowHeader = document.createElement("div");
+      rowHeader.className = "matrix-row-label";
+      rowHeader.textContent = rowObj.label || `Row ${rIdx}`;
+      rowDiv.appendChild(rowHeader);
+
+      const cellsDiv = document.createElement("div");
+      cellsDiv.className = "matrix-row-cells";
+
+      rowObj.cells.forEach((cellObj, cIdx) => {
+        const cell = document.createElement("div");
+        cell.className = `matrix-cell ${cellObj.activeClass || ""}`;
+
+        const posTag = document.createElement("span");
+        posTag.className = "matrix-cell-pos";
+        posTag.textContent = `[${rIdx},${cIdx}]`;
+
+        const valTag = document.createElement("span");
+        valTag.className = "matrix-cell-val";
+        valTag.textContent = cellObj.val;
+
+        cell.appendChild(posTag);
+        cell.appendChild(valTag);
+
+        // Check pointers targeting [rIdx, cIdx]
+        const cellPtrs = Object.entries(pointers).filter(([_, pos]) => {
+          if (Array.isArray(pos)) return pos[0] === rIdx && pos[1] === cIdx;
+          if (typeof pos === "number") return pos === (rIdx * rowObj.cells.length + cIdx);
+          return false;
+        });
+
+        if (cellPtrs.length > 0) {
+          const ptrDiv = document.createElement("div");
+          ptrDiv.className = "pointer-container";
+          cellPtrs.forEach(([pName, _], pIdx) => {
+            const ptrBadge = document.createElement("span");
+            const colorClass = pIdx % 4 === 0 ? "ptr-blue" : pIdx % 4 === 1 ? "ptr-purple" : pIdx % 4 === 2 ? "ptr-green" : "ptr-amber";
+            ptrBadge.className = `pointer-badge ${colorClass}`;
+            ptrBadge.textContent = pName;
+            ptrDiv.appendChild(ptrBadge);
+          });
+          cell.appendChild(ptrDiv);
+        }
+
+        cellsDiv.appendChild(cell);
+      });
+
+      rowDiv.appendChild(cellsDiv);
+
+      if (rowObj.rowSum !== undefined) {
+        const sumBadge = document.createElement("div");
+        sumBadge.className = `matrix-row-sum ${rowObj.isMax ? "row-sum-max" : ""}`;
+        sumBadge.innerHTML = `<span style="font-size:0.7rem; color:var(--text-muted);">Sum</span><strong>$${rowObj.rowSum}</strong>`;
+        rowDiv.appendChild(sumBadge);
+      }
+
+      table.appendChild(rowDiv);
+    });
+
+    gridDiv.appendChild(table);
+    this.matrixContainer.appendChild(gridDiv);
+  },
+
+  renderAux(auxState, step, isFinal) {
     if (!this.auxContainer) return;
     this.auxContainer.innerHTML = "";
 
-    if (auxState.hashMap) {
+    const resVal = step && step.vars ? (step.vars.result !== undefined ? step.vars.result : (step.vars.output !== undefined ? step.vars.output : step.vars.pivotIndex)) : undefined;
+
+    // 1. Output Result Array View
+    if (auxState && auxState.outputArray) {
+      const outputWrapper = document.createElement("div");
+      outputWrapper.className = "aux-output-wrapper";
+
+      const title = document.createElement("div");
+      title.className = "aux-title";
+      title.textContent = auxState.outputTitle || "✨ RESULT ARRAY OUTPUT";
+
+      const arrayBox = document.createElement("div");
+      arrayBox.className = "aux-array-box";
+
+      auxState.outputArray.forEach((item, idx) => {
+        const itemPill = document.createElement("div");
+        itemPill.className = `aux-array-cell ${item.activeClass || ""}`;
+        itemPill.innerHTML = `<span class="aux-cell-idx">${idx}</span><span class="aux-cell-val">${item.val !== undefined ? item.val : item}</span>`;
+        arrayBox.appendChild(itemPill);
+      });
+
+      outputWrapper.appendChild(title);
+      outputWrapper.appendChild(arrayBox);
+      this.auxContainer.appendChild(outputWrapper);
+    }
+
+    // 2. HashMap View
+    if (auxState && auxState.hashMap) {
       const hashMapWrapper = document.createElement("div");
       hashMapWrapper.className = "hashmap-grid-view";
       
@@ -160,16 +292,70 @@ const VisualizerEngine = {
       hashMapWrapper.appendChild(entriesDiv);
       this.auxContainer.appendChild(hashMapWrapper);
     }
+
+    // 3. Final Output Result Card (Prominent display on completion or when result is ready)
+    if (isFinal && resVal !== undefined && (!auxState || !auxState.outputArray)) {
+      const resultCard = document.createElement("div");
+      resultCard.className = "aux-output-wrapper";
+      resultCard.style.borderColor = "var(--accent-green)";
+      resultCard.style.boxShadow = "0 0 20px var(--accent-green-glow)";
+
+      const title = document.createElement("div");
+      title.className = "aux-title";
+      title.style.color = "var(--accent-green)";
+      title.textContent = "🏆 FINAL COMPUTED OUTPUT RESULT";
+
+      const displayRes = typeof resVal === "object" ? JSON.stringify(resVal) : String(resVal);
+
+      const valBox = document.createElement("div");
+      valBox.style.fontFamily = "var(--font-code)";
+      valBox.style.fontSize = "1.2rem";
+      valBox.style.fontWeight = "900";
+      valBox.style.color = "#ffffff";
+      valBox.style.padding = "0.4rem 0.8rem";
+      valBox.style.background = "rgba(16, 185, 129, 0.2)";
+      valBox.style.borderRadius = "8px";
+      valBox.style.display = "inline-block";
+      valBox.textContent = displayRes;
+
+      resultCard.appendChild(title);
+      resultCard.appendChild(valBox);
+      this.auxContainer.appendChild(resultCard);
+    }
+  },
+
+  normalizeCodeIndent(codeStr) {
+    if (!codeStr) return "";
+    const rawLines = codeStr.split("\n");
+    while (rawLines.length > 0 && rawLines[0].trim() === "") rawLines.shift();
+    while (rawLines.length > 0 && rawLines[rawLines.length - 1].trim() === "") rawLines.pop();
+    if (rawLines.length === 0) return "";
+
+    let minIndent = Infinity;
+    rawLines.forEach(line => {
+      if (line.trim().length > 0) {
+        const match = line.match(/^(\s*)/);
+        const indent = match ? match[1].length : 0;
+        if (indent < minIndent) minIndent = indent;
+      }
+    });
+
+    if (minIndent === Infinity || minIndent === 0) return rawLines.join("\n");
+    return rawLines.map(line => line.length >= minIndent ? line.slice(minIndent) : line).join("\n");
   },
 
   renderCode(codeString, highlightLine) {
     if (!this.codeDisplayBox) return;
-    const lines = codeString.split("\n");
+    const activeLine = (typeof highlightLine === "object" && highlightLine !== null)
+      ? (highlightLine[this.currentLang] || highlightLine.javascript || 1)
+      : highlightLine;
+    const cleanCode = this.normalizeCodeIndent(codeString);
+    const lines = cleanCode.split("\n");
     let html = "";
 
     lines.forEach((line, idx) => {
       const lineNum = idx + 1;
-      const isActive = lineNum === highlightLine;
+      const isActive = lineNum === activeLine;
       const highlightedLine = this.highlightSyntax(line, this.currentLang);
       html += `<div class="code-line ${isActive ? "active-line" : ""}"><span class="line-num">${lineNum}</span><span class="line-text">${highlightedLine}</span></div>`;
     });

@@ -11,15 +11,21 @@ const PanelResizerEngine = {
   init() {
     const resizerLeft = document.getElementById("resizerLeft");
     const resizerRight = document.getElementById("resizerRight");
+    const resizerRightSubPanel = document.getElementById("resizerRightSubPanel");
 
     const panelLeft = document.getElementById("panelLeft");
     const panelRight = document.getElementById("panelRight");
+    const subpanelCodeTop = document.getElementById("subpanelCodeTop");
+    const subpanelVarsBottom = document.getElementById("subpanelVarsBottom");
 
     if (resizerLeft && panelLeft) {
       this.setupResizer(resizerLeft, panelLeft, "left");
     }
     if (resizerRight && panelRight) {
       this.setupResizer(resizerRight, panelRight, "right");
+    }
+    if (resizerRightSubPanel && subpanelCodeTop && subpanelVarsBottom) {
+      this.setupVerticalSubpanelResizer(resizerRightSubPanel, subpanelCodeTop, subpanelVarsBottom);
     }
 
     // Bind Collapse Toggle Buttons
@@ -201,5 +207,97 @@ const PanelResizerEngine = {
         if (quickBtn) quickBtn.classList.add("active");
       }
     }
+  },
+
+  setupVerticalSubpanelResizer(resizerElem, topElem, bottomElem) {
+    let startY = 0;
+    let startTopHeight = 0;
+    let startBottomHeight = 0;
+    let rAFPending = false;
+    let currentY = 0;
+
+    const onMouseDown = (e) => {
+      e.preventDefault();
+      startY = e.clientY;
+      currentY = e.clientY;
+      startTopHeight = topElem.getBoundingClientRect().height;
+      startBottomHeight = bottomElem.getBoundingClientRect().height;
+      resizerElem.classList.add("dragging");
+      document.body.classList.add("is-resizing");
+
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    };
+
+    const updateHeight = () => {
+      const dy = currentY - startY;
+      let newTopHeight = startTopHeight + dy;
+      let newBottomHeight = startBottomHeight - dy;
+
+      const minTopH = 120;
+      const minBottomH = 80;
+
+      if (newTopHeight >= minTopH && newBottomHeight >= minBottomH) {
+        topElem.style.flex = "none";
+        topElem.style.height = `${newTopHeight}px`;
+        bottomElem.style.height = `${newBottomHeight}px`;
+      }
+
+      rAFPending = false;
+    };
+
+    const onMouseMove = (e) => {
+      currentY = e.clientY;
+      if (!rAFPending) {
+        rAFPending = true;
+        requestAnimationFrame(updateHeight);
+      }
+    };
+
+    const onMouseUp = () => {
+      resizerElem.classList.remove("dragging");
+      document.body.classList.remove("is-resizing");
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+
+    resizerElem.addEventListener("mousedown", onMouseDown);
+
+    // Double click to reset split
+    resizerElem.addEventListener("dblclick", () => {
+      topElem.style.flex = "1";
+      topElem.style.height = "auto";
+      bottomElem.style.height = "250px";
+    });
+
+    // Touch Support for Mobile / Tablet Dragging
+    resizerElem.addEventListener("touchstart", (e) => {
+      const touch = e.touches[0];
+      startY = touch.clientY;
+      currentY = touch.clientY;
+      startTopHeight = topElem.getBoundingClientRect().height;
+      startBottomHeight = bottomElem.getBoundingClientRect().height;
+      resizerElem.classList.add("dragging");
+      document.body.classList.add("is-resizing");
+
+      const onTouchMove = (te) => {
+        const t = te.touches[0];
+        currentY = t.clientY;
+        if (!rAFPending) {
+          rAFPending = true;
+          requestAnimationFrame(updateHeight);
+        }
+      };
+
+      const onTouchEnd = () => {
+        resizerElem.classList.remove("dragging");
+        document.body.classList.remove("is-resizing");
+        document.removeEventListener("touchmove", onTouchMove);
+        document.removeEventListener("touchend", onTouchEnd);
+      };
+
+      document.addEventListener("touchmove", onTouchMove);
+      document.addEventListener("touchend", onTouchEnd);
+    });
   }
 };

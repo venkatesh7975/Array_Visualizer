@@ -20,6 +20,7 @@ const App = {
   spaceCompBadge: document.getElementById("spaceCompBadge"),
 
   modeOptimalBtn: document.getElementById("modeOptimalBtn"),
+  modeInplaceBtn: document.getElementById("modeInplaceBtn"),
   modeBruteBtn: document.getElementById("modeBruteBtn"),
 
   // Overview Tab DOMs
@@ -128,11 +129,19 @@ const App = {
 
     prob.currentMode = mode; // Attach mode to problem object
 
-    // Update Mode Toggle Buttons Styling
-    if (this.modeOptimalBtn && this.modeBruteBtn) {
-      this.modeOptimalBtn.classList.toggle("active", mode === "optimal");
-      this.modeBruteBtn.classList.toggle("active", mode === "brute");
+    // Update Mode Toggle Buttons Styling & Visibility
+    const hasInplace = !!(prob.code && prob.code.inplace);
+    if (this.modeInplaceBtn) {
+      this.modeInplaceBtn.style.display = hasInplace ? "inline-block" : "none";
+      if (!hasInplace && mode === "inplace") {
+        mode = "optimal";
+        this.currentMode = "optimal";
+      }
     }
+
+    if (this.modeOptimalBtn) this.modeOptimalBtn.classList.toggle("active", mode === "optimal");
+    if (this.modeInplaceBtn) this.modeInplaceBtn.classList.toggle("active", mode === "inplace");
+    if (this.modeBruteBtn) this.modeBruteBtn.classList.toggle("active", mode === "brute");
 
     // Header Badges based on mode
     if (this.diffBadge) {
@@ -142,10 +151,10 @@ const App = {
     if (this.lcNumBadge) this.lcNumBadge.textContent = `LC #${prob.lcNum}`;
     
     if (this.timeCompBadge) {
-      this.timeCompBadge.textContent = `⏱️ ${mode === "optimal" ? prob.optimalTime : prob.bruteTime}`;
+      this.timeCompBadge.textContent = `⏱️ ${mode === "inplace" ? (prob.inplaceTime || prob.optimalTime) : mode === "optimal" ? prob.optimalTime : prob.bruteTime}`;
     }
     if (this.spaceCompBadge) {
-      this.spaceCompBadge.textContent = `💾 ${mode === "optimal" ? prob.optimalSpace : prob.bruteSpace}`;
+      this.spaceCompBadge.textContent = `💾 ${mode === "inplace" ? (prob.inplaceSpace || "O(1)") : mode === "optimal" ? prob.optimalSpace : prob.bruteSpace}`;
     }
 
     // Overview Tab
@@ -273,11 +282,18 @@ const App = {
       VisualizerEngine.setZoom(1.0);
     });
 
-    // Mode Toggle Buttons (Optimized vs Brute Force)
+    // Mode Toggle Buttons (Optimized vs In-Place vs Brute Force)
     if (this.modeOptimalBtn) {
       this.modeOptimalBtn.addEventListener("click", () => {
         if (this.currentMode !== "optimal") {
           this.loadProblem(this.currentProblemId, null, null, "optimal");
+        }
+      });
+    }
+    if (this.modeInplaceBtn) {
+      this.modeInplaceBtn.addEventListener("click", () => {
+        if (this.currentMode !== "inplace") {
+          this.loadProblem(this.currentProblemId, null, null, "inplace");
         }
       });
     }
