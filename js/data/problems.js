@@ -6,20 +6,19 @@ const CODE_SOLUTIONS = {
   // Pattern 1: Array Traversal
   101: {
     optimal: {
-      javascript: `function runningSum(nums) {\n  let running = 0;\n  let res = [];\n  for (let i = 0; i < nums.length; i++) {\n    running += nums[i];\n    res.push(running);\n  }\n  return res;\n}`,
-      python: `def runningSum(nums: List[int]) -> List[int]:\n    running = 0\n    res = []\n    for i in range(len(nums)):\n        running += nums[i]\n        res.append(running)\n    pass\n    return res`,
+      javascript: `function runningSum(nums) {\n  let running = 0;\n  let res = [];\n  for (let i = 0; i < nums.length; i++) {\n    running += nums[i];\n    res.push(running);\n  }\n  return res;\n}`,      python: `class Solution:\n    def runningSum(self, nums: List[int]) -> List[int]:\n        running = 0\n        res = []\n        for i in range(len(nums)):\n            running += nums[i]\n            res.append(running)\n        return res`,
       java: `public int[] runningSum(int[] nums) {\n    int running = 0;\n    int[] res = new int[nums.length];\n    for (let i = 0; i < nums.length; i++) {\n        running += nums[i];\n        res[i] = running;\n    }\n    return res;\n}`,
       cpp: `vector<int> runningSum(vector<int>& nums) {\n    int running = 0;\n    vector<int> res;\n    for (int i = 0; i < nums.size(); i++) {\n        running += nums[i];\n        res.push_back(running);\n    }\n    return res;\n}`
     },
     inplace: {
       javascript: `function runningSumInPlace(nums) {\n  for (let i = 1; i < nums.length; i++) {\n    nums[i] += nums[i - 1];\n  }\n  return nums;\n}`,
-      python: `def runningSumInPlace(nums: List[int]) -> List[int]:\n    for i in range(1, len(nums)):\n        nums[i] += nums[i - 1]\n    return nums`,
+      python: `class Solution:\n    def runningSumInPlace(self, nums: List[int]) -> List[int]:\n        for i in range(1, len(nums)):\n            nums[i] += nums[i - 1]\n        return nums`,
       java: `public int[] runningSumInPlace(int[] nums) {\n    for (int i = 1; i < nums.length; i++) {\n        nums[i] += nums[i - 1];\n    }\n    return nums;\n}`,
       cpp: `vector<int> runningSumInPlace(vector<int>& nums) {\n    for (int i = 1; i < nums.size(); i++) {\n        nums[i] += nums[i - 1];\n    }\n    return nums;\n}`
     },
     brute: {
       javascript: `function runningSumBrute(nums) {\n  let res = [];\n  for (let i = 0; i < nums.length; i++) {\n    let sum = 0;\n    for (let j = 0; j <= i; j++) sum += nums[j];\n    res.push(sum);\n  }\n  return res;\n}`,
-      python: `def runningSumBrute(nums: List[int]) -> List[int]:\n    res = []\n    for i in range(len(nums)):\n        sum_val = 0\n        for j in range(i + 1): sum_val += nums[j]\n        res.append(sum_val)\n    return res`,
+      python: `class Solution:\n    def runningSumBrute(self, nums: List[int]) -> List[int]:\n        res = []\n        for i in range(len(nums)):\n            sum_val = 0\n            for j in range(i + 1): sum_val += nums[j]\n            res.append(sum_val)\n        return res`,
       java: `public int[] runningSumBrute(int[] nums) {\n    int[] res = new int[nums.length];\n    for (int i = 0; i < nums.length; i++) {\n        int sum = 0;\n        for (int j = 0; j <= i; j++) sum += nums[j];\n        res[i] = sum;\n    }\n    return res;\n}`,
       cpp: `vector<int> runningSumBrute(vector<int>& nums) {\n    vector<int> res;\n    for (int i = 0; i < nums.size(); i++) {\n        int sum = 0;\n        for (int j = 0; j <= i; j++) sum += nums[j];\n        res.push_back(sum);\n    }\n    return res;\n}`
     }
@@ -28,13 +27,13 @@ const CODE_SOLUTIONS = {
   102: {
     optimal: {
       javascript: `function maximumWealth(accounts) {\n  let maxWealth = 0;\n  for (let r = 0; r < accounts.length; r++) {\n    let rowSum = accounts[r].reduce((a, b) => a + b, 0);\n    maxWealth = Math.max(maxWealth, rowSum);\n  }\n  return maxWealth;\n}`,
-      python: `def maximumWealth(accounts: List[List[int]]) -> int:\n    max_wealth = 0\n    for customer in accounts:\n        row_sum = sum(customer)\n        max_wealth = max(max_wealth, row_sum)\n    pass\n    return max_wealth`,
+      python: `class Solution:\n    def maximumWealth(self, accounts: List[List[int]]) -> int:\n        max_wealth = 0\n        for customer in accounts:\n            row_sum = sum(customer)\n            max_wealth = max(max_wealth, row_sum)\n        return max_wealth`,
       java: `public int maximumWealth(int[][] accounts) {\n    int maxWealth = 0;\n    for (int[] customer : accounts) {\n        int rowSum = Arrays.stream(customer).sum();\n        maxWealth = Math.max(maxWealth, rowSum);\n    }\n    return maxWealth;\n}`,
       cpp: `int maximumWealth(vector<vector<int>>& accounts) {\n    int maxWealth = 0;\n    for (auto& customer : accounts) {\n        int rowSum = accumulate(customer.begin(), customer.end(), 0);\n        maxWealth = max(maxWealth, rowSum);\n    }\n    return maxWealth;\n}`
     },
     brute: {
       javascript: `function maximumWealthBrute(accounts) {\n  let maxW = 0;\n  for (let r = 0; r < accounts.length; r++) {\n    let s = 0;\n    for (let c = 0; c < accounts[r].length; c++) s += accounts[r][c];\n    if (s > maxW) maxW = s;\n  }\n  return maxW;\n}`,
-      python: `def maximumWealthBrute(accounts: List[List[int]]) -> int:\n    max_w = 0\n    for i in range(len(accounts)):\n        s = 0\n        for j in range(len(accounts[i])):\n            s += accounts[i][j]\n        if s > max_w: max_w = s\n    return max_w`,
+      python: `class Solution:\n    def maximumWealthBrute(self, accounts: List[List[int]]) -> int:\n        max_w = 0\n        for i in range(len(accounts)):\n            s = 0\n            for j in range(len(accounts[i])):\n                s += accounts[i][j]\n            if s > max_w: max_w = s\n        return max_w`,
       java: `public int maximumWealthBrute(int[][] accounts) {\n    int maxW = 0;\n    for (int i = 0; i < accounts.length; i++) {\n        int s = 0;\n        for (int j = 0; j < accounts[i].length; j++) s += accounts[i][j];\n        if (s > maxW) maxW = s;\n    }\n    return maxW;\n}`,
       cpp: `int maximumWealthBrute(vector<vector<int>>& accounts) {\n    int maxW = 0;\n    for (int i = 0; i < accounts.size(); i++) {\n        int s = 0;\n        for (int j = 0; j < accounts[i].size(); j++) s += accounts[i][j];\n        if (s > maxW) maxW = s;\n    }\n    return maxW;\n}`
     }
@@ -43,13 +42,13 @@ const CODE_SOLUTIONS = {
   103: {
     optimal: {
       javascript: `function findNumbers(nums) {\n  let count = 0;\n  for (let num of nums) {\n    if (String(num).length % 2 === 0) count++;\n  }\n  return count;\n}`,
-      python: `def findNumbers(nums: List[int]) -> int:\n    count = 0\n    for num in nums:\n        if len(str(num)) % 2 == 0:\n            count += 1\n    return count`,
+      python: `class Solution:\n    def findNumbers(self, nums: List[int]) -> int:\n        count = 0\n        for num in nums:\n            if len(str(num)) % 2 == 0:\n                count += 1\n        return count`,
       java: `public int findNumbers(int[] nums) {\n    int count = 0;\n    for (int num : nums) {\n        if (String.valueOf(num).length() % 2 == 0) count++;\n    }\n    return count;\n}`,
       cpp: `int findNumbers(vector<int>& nums) {\n    int count = 0;\n    for (int x : nums) {\n        if (to_string(x).length() % 2 == 0) count++;\n    }\n    return count;\n}`
     },
     brute: {
       javascript: `function findNumbersBrute(nums) {\n  let count = 0;\n  for (let i = 0; i < nums.length; i++) {\n    let digits = 0, temp = nums[i];\n    while (temp > 0) { temp = Math.floor(temp / 10); digits++; }\n    if (digits % 2 === 0) count++;\n  }\n  return count;\n}`,
-      python: `def findNumbersBrute(nums: List[int]) -> int:\n    count = 0\n    for num in nums:\n        digits = 0\n        temp = num\n        while temp > 0:\n            temp //= 10\n            digits += 1\n        if digits % 2 == 0:\n            count += 1\n    return count`,
+      python: `class Solution:\n    def findNumbersBrute(self, nums: List[int]) -> int:\n        count = 0\n        for num in nums:\n            digits = 0\n            temp = num\n            while temp > 0:\n                temp //= 10\n                digits += 1\n            if digits % 2 == 0:\n                count += 1\n        return count`,
       java: `public int findNumbersBrute(int[] nums) {\n    int count = 0;\n    for (int num : nums) {\n        int digits = 0, temp = num;\n        while (temp > 0) { temp /= 10; digits++; }\n        if (digits % 2 == 0) count++;\n    }\n    return count;\n}`,
       cpp: `int findNumbersBrute(vector<int>& nums) {\n    int count = 0;\n    for (int num : nums) {\n        int digits = 0, temp = num;\n        while (temp > 0) { temp /= 10; digits++; }\n        if (digits % 2 == 0) count++;\n    }\n    return count;\n}`
     }
@@ -73,7 +72,7 @@ const CODE_SOLUTIONS = {
   105: {
     optimal: {
       javascript: `function removeDuplicates(nums) {\n  if (nums.length === 0) return 0;\n  let write = 1;\n  for (let read = 1; read < nums.length; read++) {\n    if (nums[read] !== nums[read - 1]) {\n      nums[write] = nums[read];\n      write++;\n    }\n  }\n  return write;\n}`,
-      python: `def removeDuplicates(nums: List[int]) -> int:\n    if not nums: return 0\n    write = 1\n    for read in range(1, len(nums)):\n        if nums[read] != nums[read - 1]:\n            nums[write] = nums[read]\n            write += 1\n    return write`,
+      python: `class Solution:\n    def removeDuplicates(self, nums: List[int]) -> int:\n        if not nums: return 0\n        write = 1\n        for read in range(1, len(nums)):\n            if nums[read] != nums[read - 1]:\n                nums[write] = nums[read]\n                write += 1\n        return write`,
       java: `public int removeDuplicates(int[] nums) {\n    if (nums.length == 0) return 0;\n    int write = 1;\n    for (int read = 1; read < nums.length; read++) {\n        if (nums[read] != nums[read - 1]) nums[write++] = nums[read];\n    }\n    return write;\n}`,
       cpp: `int removeDuplicates(vector<int>& nums) {\n    if (nums.empty()) return 0;\n    int write = 1;\n    for (int read = 1; read < nums.size(); read++) {\n        if (nums[read] != nums[read - 1]) nums[write++] = nums[read];\n    }\n    return write;\n}`
     },
@@ -140,7 +139,7 @@ const CODE_SOLUTIONS = {
     },
     brute: {
       javascript: `function subarraySumBrute(nums, k) {\n  let count = 0;\n  for (let i = 0; i < nums.length; i++) {\n    let sum = 0;\n    for (let j = i; j < nums.length; j++) {\n      sum += nums[j];\n      if (sum === k) count++;\n    }\n  }\n  return count;\n}`,
-      python: `class Solution:\n    def subarraySumBrute(self, nums: List[int], k: int) -> int:\n        count = 0\n        for i in range(len(nums)):\n            curr_sum = 0\n            for j in range(i, len(nums)):\n                curr_sum += nums[i]s[j]\n                if curr_sum == k:\n                    count += 1\n        return count`,
+      python: `class Solution:\n    def subarraySumBrute(self, nums: List[int], k: int) -> int:\n        count = 0\n        for i in range(len(nums)):\n            curr_sum = 0\n            for j in range(i, len(nums)):\n                curr_sum += nums[j]\n                if curr_sum == k:\n                    count += 1\n        return count`,
       java: `public int subarraySumBrute(int[] nums, int k) {\n    int count = 0;\n    for (int i = 0; i < nums.length; i++) {\n        int sum = 0;\n        for (let j = i; j < nums.length; j++) {\n            sum += nums[j];\n            if (sum == k) count++;\n        }\n    }\n    return count;\n}`,
       cpp: `int subarraySumBrute(vector<int>& nums, int k) {\n    int count = 0;\n    for (int i = 0; i < nums.size(); i++) {\n        int sum = 0;\n        for (int j = i; j < nums.size(); j++) {\n            sum += nums[j];\n            if (sum == k) count++;\n        }\n    }\n    return count;\n}`
     }
@@ -164,7 +163,7 @@ const CODE_SOLUTIONS = {
   301: {
     optimal: {
       javascript: `function findMaxAverage(nums, k) {\n  let sum = 0;\n  for (let i = 0; i < k; i++) sum += nums[i];\n  let max = sum;\n  for (let i = k; i < nums.length; i++) {\n    sum += nums[i] - nums[i - k];\n    max = Math.max(max, sum);\n  }\n  return max / k;\n}`,
-      python: `class Solution:\n    def findMaxAverage(self, nums: List[int], k: int) -> float:\n        curr_sum = sum(nums[:k])\n        max_sum = curr_sum\n        for i in range(k, len(nums)):\n            curr_sum += nums[i]s[i] - nums[i - k]\n            max_sum = max(max_sum, curr_sum)\n        return max_sum / k`,
+      python: `class Solution:\n    def findMaxAverage(self, nums: List[int], k: int) -> float:\n        curr_sum = sum(nums[:k])\n        max_sum = curr_sum\n        for i in range(k, len(nums)):\n            curr_sum += nums[i] - nums[i - k]\n            max_sum = max(max_sum, curr_sum)\n        return max_sum / k`,
       java: `public double findMaxAverage(int[] nums, int k) {\n    double sum = 0;\n    for (int i = 0; i < k; i++) sum += nums[i];\n    double max = sum;\n    for (int i = k; i < nums.length; i++) {\n        sum += nums[i] - nums[i - k];\n        max = Math.max(max, sum);\n    }\n    return max / k;\n}`,
       cpp: `double findMaxAverage(vector<int>& nums, int k) {\n    double sum = 0;\n    for (int i = 0; i < k; i++) sum += nums[i];\n    double max = sum;\n    for (int i = k; i < nums.size(); i++) {\n        sum += nums[i] - nums[i - k];\n        max = max(max, sum);\n    }\n    return max / k;\n}`
     }
@@ -182,7 +181,7 @@ const CODE_SOLUTIONS = {
   401: {
     optimal: {
       javascript: `function minSubArrayLen(target, nums) {\n  let left = 0, sum = 0, minLen = Infinity;\n  for (let right = 0; right < nums.length; right++) {\n    sum += nums[right];\n    while (sum >= target) {\n      minLen = Math.min(minLen, right - left + 1);\n      sum -= nums[left++];\n    }\n  }\n  return minLen === Infinity ? 0 : minLen;\n}`,
-      python: `class Solution:\n    def minSubArrayLen(self, target: int, nums: List[int]) -> int:\n        left = curr_sum = 0\n        min_len = float('inf')\n        for right in range(len(nums)):\n            curr_sum += nums[i]s[right]\n            while curr_sum >= target:\n                min_len = min(min_len, right - left + 1)\n                curr_sum -= nums[left]\n                left += 1\n        return 0 if min_len == float('inf') else min_len`,
+      python: `class Solution:\n    def minSubArrayLen(self, target: int, nums: List[int]) -> int:\n        left = curr_sum = 0\n        min_len = float('inf')\n        for right in range(len(nums)):\n            curr_sum += nums[right]\n            while curr_sum >= target:\n                min_len = min(min_len, right - left + 1)\n                curr_sum -= nums[left]\n                left += 1\n        return 0 if min_len == float('inf') else min_len`,
       java: `public int minSubArrayLen(int target, int[] nums) {\n    int left = 0, sum = 0, minLen = Integer.MAX_VALUE;\n    for (let right = 0; right < nums.length; right++) {\n        sum += nums[right];\n        while (sum >= target) {\n            minLen = Math.min(minLen, right - left + 1);\n            sum -= nums[left++];\n        }\n    }\n    return minLen == Integer.MAX_VALUE ? 0 : minLen;\n}`,
       cpp: `int minSubArrayLen(int target, vector<int>& nums) {\n    int left = 0, sum = 0, minLen = INT_MAX;\n    for (int right = 0; right < nums.size(); right++) {\n        sum += nums[right];\n        while (sum >= target) {\n            minLen = Math.min(minLen, right - left + 1);\n            sum -= nums[left++];\n        }\n    }\n    return minLen == INT_MAX ? 0 : minLen;\n}`
     }
@@ -344,7 +343,7 @@ const CODE_SOLUTIONS = {
   304: {
     optimal: {
       javascript: `function getAverages(nums, k) {\n  let n = nums.length, res = new Array(n).fill(-1);\n  let len = 2 * k + 1;\n  if (n < len) return res;\n  let sum = 0;\n  for (let i = 0; i < len; i++) sum += nums[i];\n  res[k] = Math.floor(sum / len);\n  for (let i = len; i < n; i++) {\n    sum += nums[i] - nums[i - len];\n    res[i - k] = Math.floor(sum / len);\n  }\n  return res;\n}`,
-      python: `class Solution:\n    def getAverages(self, nums: List[int], k: int) -> List[int]:\n        n = len(nums)\n        res = [-1] * n\n        window_len = 2 * k + 1\n        if n < window_len: return res\n        curr_sum = sum(nums[:window_len])\n        res[k] = curr_sum // window_len\n        for i in range(window_len, n):\n            curr_sum += nums[i]s[i] - nums[i - window_len]\n            res[i - k] = curr_sum // window_len\n        return res`,
+      python: `class Solution:\n    def getAverages(self, nums: List[int], k: int) -> List[int]:\n        n = len(nums)\n        res = [-1] * n\n        window_len = 2 * k + 1\n        if n < window_len: return res\n        curr_sum = sum(nums[:window_len])\n        res[k] = curr_sum // window_len\n        for i in range(window_len, n):\n            curr_sum += nums[i] - nums[i - window_len]\n            res[i - k] = curr_sum // window_len\n        return res`,
       java: `public int[] getAverages(int[] nums, int k) {\n    int n = nums.length;\n    int[] res = new int[n]; Arrays.fill(res, -1);\n    long windowLen = 2 * k + 1;\n    if (n < windowLen) return res;\n    long sum = 0;\n    for (int i = 0; i < windowLen; i++) sum += nums[i];\n    res[k] = (int)(sum / windowLen);\n    for (int i = (int)windowLen; i < n; i++) {\n        sum += nums[i] - nums[i - (int)windowLen];\n        res[i - k] = (int)(sum / windowLen);\n    }\n    return res;\n}`,
       cpp: `vector<int> getAverages(vector<int>& nums, int k) {\n    int n = nums.size();\n    vector<int> res(n, -1);\n    long long windowLen = 2 * k + 1;\n    if (n < windowLen) return res;\n    long long sum = 0;\n    for (int i = 0; i < windowLen; i++) sum += nums[i];\n    res[k] = sum / windowLen;\n    for (int i = windowLen; i < n; i++) {\n        sum += nums[i] - nums[i - windowLen];\n        res[i - k] = sum / windowLen;\n    }\n    return res;\n}`
     }
@@ -353,7 +352,7 @@ const CODE_SOLUTIONS = {
   305: {
     optimal: {
       javascript: `function maximumSubarraySum(nums, k) {\n  let max = 0, sum = 0, set = new Set(), left = 0;\n  for (let right = 0; right < nums.length; right++) {\n    while (set.has(nums[right])) {\n      set.delete(nums[left]);\n      sum -= nums[left++];\n    }\n    set.add(nums[right]);\n    sum += nums[right];\n    if (right - left + 1 === k) {\n      max = Math.max(max, sum);\n      set.delete(nums[left]);\n      sum -= nums[left++];\n    }\n  }\n  return max;\n}`,
-      python: `class Solution:\n    def maximumSubarraySum(self, nums: List[int], k: int) -> int:\n        max_sum = curr_sum = 0\n        seen = set()\n        left = 0\n        for right in range(len(nums)):\n            while nums[right] in seen:\n                seen.remove(nums[left])\n                curr_sum -= nums[left]\n                left += 1\n            seen.add(nums[right])\n            curr_sum += nums[i]s[right]\n            if right - left + 1 == k:\n                max_sum = max(max_sum, curr_sum)\n                seen.remove(nums[left])\n                curr_sum -= nums[left]\n                left += 1\n        return max_sum`,
+      python: `class Solution:\n    def maximumSubarraySum(self, nums: List[int], k: int) -> int:\n        max_sum = curr_sum = 0\n        seen = set()\n        left = 0\n        for right in range(len(nums)):\n            while nums[right] in seen:\n                seen.remove(nums[left])\n                curr_sum -= nums[left]\n                left += 1\n            seen.add(nums[right])\n            curr_sum += nums[right]\n            if right - left + 1 == k:\n                max_sum = max(max_sum, curr_sum)\n                seen.remove(nums[left])\n                curr_sum -= nums[left]\n                left += 1\n        return max_sum`,
       java: `public long maximumSubarraySum(int[] nums, int k) {\n    long max = 0, sum = 0;\n    Set<Integer> set = new HashSet<>();\n    int left = 0;\n    for (int right = 0; right < nums.length; right++) {\n        while (set.contains(nums[right])) {\n            set.remove(nums[left]);\n            sum -= nums[left++];\n        }\n        set.add(nums[right]);\n        sum += nums[right];\n        if (right - left + 1 == k) {\n            max = Math.max(max, sum);\n            set.remove(nums[left]);\n            sum -= nums[left++];\n        }\n    }\n    return max;\n}`,
       cpp: `long long maximumSubarraySum(vector<int>& nums, int k) {\n    long long maxVal = 0, sum = 0;\n    unordered_set<int> set;\n    int left = 0;\n    for (int right = 0; right < nums.size(); right++) {\n        while (set.count(nums[right])) {\n            set.erase(nums[left]);\n            sum -= nums[left++];\n        }\n        set.insert(nums[right]);\n        sum += nums[right];\n        if (right - left + 1 == k) {\n            maxVal = max(maxVal, sum);\n            set.erase(nums[left]);\n            sum -= nums[left++];\n        }\n    }\n    return maxVal;\n}`
     }
@@ -597,13 +596,13 @@ const CODE_SOLUTIONS = {
   501: {
     optimal: {
       javascript: `function twoSum(numbers, target) {\n  let left = 0, right = numbers.length - 1;\n  while (left < right) {\n    let sum = numbers[left] + numbers[right];\n    if (sum === target) return [left + 1, right + 1];\n    else if (sum < target) left++;\n    else right--;\n  }\n  return [];\n}`,
-      python: `def twoSum(numbers: List[int], target: int) -> List[int]:\n    left, right = 0, len(numbers) - 1\n    while left < right:\n        curr_sum = numbers[left] + numbers[right]\n        if curr_sum == target:\n            return [left + 1, right + 1]\n        elif curr_sum < target:\n            left += 1\n        else:\n            right -= 1\n    return []`,
+      python: `class Solution:\n    def twoSum(self, numbers: List[int], target: int) -> List[int]:\n        left, right = 0, len(numbers) - 1\n        while left < right:\n            curr_sum = numbers[left] + numbers[right]\n            if curr_sum == target:\n                return [left + 1, right + 1]\n            elif curr_sum < target:\n                left += 1\n            else:\n                right -= 1\n        return []`,
       java: `public int[] twoSum(int[] numbers, int target) {\n    int left = 0, right = numbers.length - 1;\n    while (left < right) {\n        int sum = numbers[left] + numbers[right];\n        if (sum == target) return new int[]{left + 1, right + 1};\n        else if (sum < target) left++;\n        else right--;\n    }\n    return new int[]{};\n}`,
       cpp: `vector<int> twoSum(vector<int>& numbers, int target) {\n    int left = 0, right = numbers.size() - 1;\n    while (left < right) {\n        int sum = numbers[left] + numbers[right];\n        if (sum == target) return {left + 1, right + 1};\n        else if (sum < target) left++;\n        else right--;\n    }\n    return {};\n}`
     },
     brute: {
       javascript: `function twoSumBrute(numbers, target) {\n  for (let i = 0; i < numbers.length; i++) {\n    for (let j = i + 1; j < numbers.length; j++) {\n      if (numbers[i] + numbers[j] === target) return [i + 1, j + 1];\n    }\n  }\n  return [];\n}`,
-      python: `def twoSumBrute(numbers: List[int], target: int) -> List[int]:\n    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if numbers[i] + numbers[j] == target:\n                return [i + 1, j + 1]\n    return []`,
+      python: `class Solution:\n    def twoSumBrute(self, numbers: List[int], target: int) -> List[int]:\n        for i in range(len(numbers)):\n            for j in range(i + 1, len(numbers)):\n                if numbers[i] + numbers[j] == target:\n                    return [i + 1, j + 1]\n        return []`,
       java: `public int[] twoSumBrute(int[] numbers, int target) {\n    for (int i = 0; i < numbers.length; i++) {\n        for (int j = i + 1; j < numbers.length; j++) {\n            if (numbers[i] + numbers[j] == target) return new int[]{i + 1, j + 1};\n        }\n    }\n    return new int[]{};\n}`,
       cpp: `vector<int> twoSumBrute(vector<int>& numbers, int target) {\n    for (int i = 0; i < numbers.size(); i++) {\n        for (int j = i + 1; j < numbers.size(); j++) {\n            if (numbers[i] + numbers[j] == target) return {i + 1, j + 1};\n        }\n    }\n    return {};\n}`
     }
@@ -613,15 +612,15 @@ const CODE_SOLUTIONS = {
   801: {
     optimal: {
       javascript: `function twoSum(nums, target) {\n  let map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    let comp = target - nums[i];\n    if (map.has(comp)) return [map.get(comp), i];\n    map.set(nums[i], i);\n  }\n  return [];\n}`,
-      python: `def twoSum(nums: List[int], target: int) -> List[int]:\n    seen = {}\n    for i in range(len(nums)):\n        complement = target - nums[i]\n        if complement in seen:\n            return [seen[complement], i]\n        seen[nums[i]] = i\n    return []`,
+      python: `class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        seen = {}\n        for i in range(len(nums)):\n            complement = target - nums[i]\n            if complement in seen:\n                return [seen[complement], i]\n            seen[nums[i]] = i\n        return []`,
       java: `public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> map = new HashMap<>();\n    for (int i = 0; i < nums.length; i++) {\n        int comp = target - nums[i];\n        if (map.containsKey(comp)) return new int[]{map.get(comp), i};\n        map.put(nums[i], i);\n    }\n    return new int[]{};\n}`,
       cpp: `vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int, int> map;\n    for (int i = 0; i < nums.size(); i++) {\n        int comp = target - nums[i];\n        if (map.count(comp)) return {map[comp], i};\n        map[nums[i]] = i;\n    }\n    return {};\n}`
     },
     brute: {
       javascript: `function twoSumBrute(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) return [i, j];\n    }\n  }\n  return [];\n}`,
-      python: `def twoSumBrute(nums: List[int], target: int) -> List[int]:\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if numbers[i] + numbers[j] == target:\n                return [i, j]\n    return []`,
+      python: `class Solution:\n    def twoSumBrute(self, nums: List[int], target: int) -> List[int]:\n        for i in range(len(nums)):\n            for j in range(i + 1, len(nums)):\n                if nums[i] + nums[j] == target:\n                    return [i, j]\n        return []`,
       java: `public int[] twoSumBrute(int[] nums, int target) {\n    for (int i = 0; i < nums.length; i++) {\n        for (int j = i + 1; j < nums.length; j++) {\n            if (nums[i] + nums[j] == target) return new int[]{i, j};\n        }\n    }\n    return new int[]{};\n}`,
-      cpp: `vector<int> twoSumBrute(vector<int>& nums, int target) {\n    for (int i = 0; i < numbers.size(); i++) {\n        for (int j = i + 1; j < numbers.size(); j++) {\n            if (numbers[i] + numbers[j] == target) return {i, j};\n        }\n    }\n    return {};\n}`
+      cpp: `vector<int> twoSumBrute(vector<int>& nums, int target) {\n    for (int i = 0; i < nums.size(); i++) {\n        for (int j = i + 1; j < nums.size(); j++) {\n            if (nums[i] + nums[j] == target) return {i, j};\n        }\n    }\n    return {};\n}`
     }
   }
 };
@@ -1092,7 +1091,7 @@ const PROBLEMS_DATA = {
       codeObj = {
         optimal: {
           javascript: `function minSubArrayLen(target, nums) {\n  let left = 0, sum = 0, minLen = Infinity;\n  for (let right = 0; right < nums.length; right++) {\n    sum += nums[right];\n    while (sum >= target) {\n      minLen = Math.min(minLen, right - left + 1);\n      sum -= nums[left++];\n    }\n  }\n  return minLen === Infinity ? 0 : minLen;\n}`,
-          python: `def minSubArrayLen(target: int, nums: List[int]) -> int:\n    left, curr_sum, min_len = 0, 0, float('inf')\n    for right in range(len(nums)):\n        curr_sum += nums[i]s[right]\n        while curr_sum >= target:\n            min_len = min(min_len, right - left + 1)\n            curr_sum -= nums[left]\n            left += 1\n    return 0 if min_len == float('inf') else min_len`,
+          python: `def minSubArrayLen(target: int, nums: List[int]) -> int:\n    left, curr_sum, min_len = 0, 0, float('inf')\n    for right in range(len(nums)):\n        curr_sum += nums[right]\n        while curr_sum >= target:\n            min_len = min(min_len, right - left + 1)\n            curr_sum -= nums[left]\n            left += 1\n    return 0 if min_len == float('inf') else min_len`,
           java: `public int minSubArrayLen(int target, int[] nums) {\n    int left = 0, sum = 0, minLen = Integer.MAX_VALUE;\n    for (int right = 0; right < nums.length; right++) {\n        sum += nums[right];\n        while (sum >= target) {\n            minLen = Math.min(minLen, right - left + 1);\n            sum -= nums[left++];\n        }\n    }\n    return minLen == Integer.MAX_VALUE ? 0 : minLen;\n}`,
           cpp: `int minSubArrayLen(int target, vector<int>& nums) {\n    int left = 0, sum = 0, minLen = INT_MAX;\n    for (int right = 0; right < nums.size(); right++) {\n        sum += nums[right];\n        while (sum >= target) {\n            minLen = Math.min(minLen, right - left + 1);\n            sum -= nums[left++];\n        }\n    }\n    return minLen == INT_MAX ? 0 : minLen;\n}`
         },
