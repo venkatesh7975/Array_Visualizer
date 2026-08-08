@@ -232,11 +232,12 @@
     <!-- RIGHT RESIZER HANDLE -->
     <div class="panel-resizer" id="resizerRight" title="Drag to resize Right Panel"></div>
 
-    <!-- RIGHT PANEL: CODE & PARALLEL LIVE DRY RUN & VARIABLES -->
+    <!-- RIGHT PANEL: CODE, VARIABLES, DRY RUN & LOGS -->
     <section class="panel-right" id="panelRight">
       <div class="tab-header">
         <nav id="rightTabs" style="display: flex; gap: 0.2rem;">
-          <button class="tab-btn active" data-tab="tab-code">Code & Variables</button>
+          <button class="tab-btn active" data-tab="tab-code">Code</button>
+          <button class="tab-btn" data-tab="tab-vars">Variables</button>
           <button class="tab-btn" data-tab="tab-dryrun">Dry Run Table</button>
           <button class="tab-btn" data-tab="tab-logs">Logs</button>
         </nav>
@@ -244,50 +245,44 @@
       </div>
 
       <div class="tab-body" style="height: calc(100% - 44px); padding: 0;">
-        <!-- CODE & VARIABLES STACKED TAB WITH RESIZER -->
-        <div id="tab-code" class="tab-content active split-tab-container">
-          <!-- TOP SUB-PANEL: CODE & PARALLEL DRY RUN -->
-          <div id="subpanelCodeTop" class="subpanel-top">
-            <div class="code-toolbar">
-              <span class="code-title">SYNCHRONIZED CODE</span>
-              <div class="lang-selector" id="langSelector">
-                <button class="lang-btn active" data-lang="javascript">JS</button>
-                <button class="lang-btn" data-lang="python">Python</button>
-                <button class="lang-btn" data-lang="java">Java</button>
-                <button class="lang-btn" data-lang="cpp">C++</button>
-              </div>
-            </div>
-            <div id="codeDisplayBox" class="code-display-block">
-              <!-- Rendered colorful code with highlighted current step line -->
-            </div>
-
-            <!-- PARALLEL LIVE DRY RUN CARD -->
-            <div id="codeDryRunCard" class="quiz-card" style="border-left: 4px solid var(--accent-cyan); background: rgba(9, 14, 26, 0.85); margin-top: 0.5rem;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 0.3rem;">⚡ PARALLEL CODE DRY RUN</span>
-                <span id="codeDryRunLineBadge" class="badge badge-info" style="font-family: var(--font-code);">Line 1</span>
-              </div>
-              <div id="codeDryRunVars" style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem;">
-                <!-- Live variable pills for active line -->
-              </div>
-              <div id="codeDryRunOp" style="font-family: var(--font-code); font-size: 0.84rem; color: var(--accent-gold); font-weight: 800; margin-top: 0.4rem;"></div>
-              <div id="codeDryRunExp" style="font-size: 0.82rem; color: var(--text-main); margin-top: 0.2rem; line-height: 1.45;"></div>
+        <!-- CODE & DRY RUN CARD TAB -->
+        <div id="tab-code" class="tab-content active" style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem; height: 100%; overflow-y: auto;">
+          <div class="code-toolbar">
+            <span class="code-title">SYNCHRONIZED CODE</span>
+            <div class="lang-selector" id="langSelector">
+              <button class="lang-btn active" data-lang="javascript">JS</button>
+              <button class="lang-btn" data-lang="python">Python</button>
+              <button class="lang-btn" data-lang="java">Java</button>
+              <button class="lang-btn" data-lang="cpp">C++</button>
             </div>
           </div>
+          <div id="codeDisplayBox" class="code-display-block" style="flex: 1; min-height: 250px;">
+            <!-- Rendered colorful code with highlighted current step line -->
+          </div>
 
-          <!-- VERTICAL SUB-PANEL RESIZER HANDLE -->
-          <div class="subpanel-resizer-v" id="resizerRightSubPanel" title="Drag to adjust Code vs Variables height (Double click to reset)"></div>
+          <!-- PARALLEL LIVE DRY RUN CARD -->
+          <div id="codeDryRunCard" class="quiz-card" style="border-left: 4px solid var(--accent-cyan); background: rgba(9, 14, 26, 0.85); margin-top: 0.2rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 0.3rem;">⚡ PARALLEL CODE DRY RUN</span>
+              <span id="codeDryRunLineBadge" class="badge badge-info" style="font-family: var(--font-code);">Line 1</span>
+            </div>
+            <div id="codeDryRunVars" style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem;">
+              <!-- Live variable pills for active line -->
+            </div>
+            <div id="codeDryRunOp" style="font-family: var(--font-code); font-size: 0.84rem; color: var(--accent-gold); font-weight: 800; margin-top: 0.4rem;"></div>
+            <div id="codeDryRunExp" style="font-size: 0.82rem; color: var(--text-main); margin-top: 0.2rem; line-height: 1.45;"></div>
+          </div>
+        </div>
 
-          <!-- BOTTOM SUB-PANEL: VARIABLES TRACKING PANEL -->
-          <div id="subpanelVarsBottom" class="subpanel-bottom">
-            <div class="quiz-card" style="height: 100%; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 0;">
-              <h3 style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
-                <span>🔍 Live Variable Watch Grid</span>
-                <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Real-time State</span>
-              </h3>
-              <div id="varWatchGrid" class="var-watch-grid" style="flex: 1; overflow-y: auto;">
-                <!-- Variable cards dynamically updated -->
-              </div>
+        <!-- DEDICATED LIVE VARIABLES WATCH GRID TAB -->
+        <div id="tab-vars" class="tab-content" style="padding: 1rem; height: 100%; overflow-y: auto;">
+          <div class="quiz-card" style="height: 100%; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 0;">
+            <h3 style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+              <span>🔍 Live Variable Watch Grid</span>
+              <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Real-time State</span>
+            </h3>
+            <div id="varWatchGrid" class="var-watch-grid" style="flex: 1; overflow-y: auto;">
+              <!-- Variable cards dynamically updated -->
             </div>
           </div>
         </div>
