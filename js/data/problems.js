@@ -198,10 +198,10 @@ const CODE_SOLUTIONS = {
 
   502: {
     optimal: {
-      javascript: `function moveZeroes(nums) {\n  let write = 0;\n  for (let read = 0; read < nums.length; read++) {\n    if (nums[read] !== 0) {\n      let temp = nums[write]; nums[write] = nums[read]; nums[read] = temp;\n      write++;\n    }\n  }\n  return nums;\n}`,
-      python: `class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        write = 0\n        for read in range(len(nums)):\n            if nums[read] != 0:\n                nums[write], nums[read] = nums[read], nums[write]\n                write += 1`,
-      java: `public void moveZeroes(int[] nums) {\n    int write = 0;\n    for (int read = 0; read < nums.length; read++) {\n        if (nums[read] != 0) {\n            int temp = nums[write]; nums[write] = nums[read]; nums[read] = temp;\n            write++;\n        }\n    }\n}`,
-      cpp: `void moveZeroes(vector<int>& nums) {\n    int write = 0;\n    for (int read = 0; read < nums.size(); read++) {\n        if (nums[read] != 0) {\n            swap(nums[write], nums[read]);\n            write++;\n        }\n    }\n}`
+      javascript: `function moveZeroes(nums) {\n  let write = 0;\n  for (let read = 0; read < nums.length; read++) {\n    if (nums[read] !== 0) {\n      let temp = nums[write];\n      nums[write] = nums[read];\n      nums[read] = temp;\n      write++;\n    }\n  }\n}`,
+      python: `class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        write = 0\n        for read in range(len(nums)):\n            if nums[read] != 0:\n                temp = nums[write]\n                nums[write] = nums[read]\n                nums[read] = temp\n                write += 1`,
+      java: `public void moveZeroes(int[] nums) {\n    int write = 0;\n    for (int read = 0; read < nums.length; read++) {\n        if (nums[read] != 0) {\n            int temp = nums[write];\n            nums[write] = nums[read];\n            nums[read] = temp;\n            write++;\n        }\n    }\n}`,
+      cpp: `void moveZeroes(vector<int>& nums) {\n    int write = 0;\n    for (int read = 0; read < nums.size(); read++) {\n        if (nums[read] != 0) {\n            int temp = nums[write];\n            nums[write] = nums[read];\n            nums[read] = temp;\n            write++;\n        }\n    }\n}`
     }
   },
 
@@ -1614,9 +1614,9 @@ const PROBLEMS_DATA = {
             steps.push({
               lineHighlight: { javascript: 2, python: 3, java: 2, cpp: 2 },
               arrayState: arr.map((v) => ({ val: v, activeClass: "" })),
-              pointers: { "write": 0 },
-              formula: "write = 0",
-              explanation: "Initialize write pointer at index 0 to track the position for the next non-zero element.",
+              pointers: { "write": 0, "read": 0 },
+              formula: "write = 0, read = 0",
+              explanation: "Initialize write pointer at index 0 and read pointer at index 0.",
               vars: { write: 0, read: 0 }
             });
 
@@ -1631,7 +1631,7 @@ const PROBLEMS_DATA = {
                 })),
                 pointers: { "write": write, "read": read },
                 formula: `nums[read=${read}] (${arr[read]}) ${isNonZero ? "!== 0" : "=== 0"}`,
-                explanation: `Inspect arr[read=${read}] = ${arr[read]}. ${isNonZero ? `Non-zero found! Swap arr[${write}] and arr[${read}].` : "Zero element. Skip write increment."}`,
+                explanation: `Inspect arr[read=${read}] = ${arr[read]}. ${isNonZero ? `Non-zero found! Swap arr[write=${write}] (${arr[write]}) and arr[read=${read}] (${arr[read]}).` : "Zero element. Skip write increment."}`,
                 vars: { write, read, "arr[read]": arr[read], isNonZero }
               });
 
@@ -1648,16 +1648,29 @@ const PROBLEMS_DATA = {
                     activeClass: idx === write ? "active-match" : idx === read ? "active-current" : ""
                   })),
                   pointers: { "write": write, "read": read },
-                  formula: `Swap arr[${write}] (${arr[write]}) and arr[${read}] (${arr[read]}) -> write++ (${write + 1})`,
-                  explanation: `Swapped non-zero element ${arr[write]} into write index ${write}. Advance write to ${write + 1}.`,
-                  vars: { write: write + 1, read, swappedVal: arr[write] }
+                  formula: `Swap arr[${write}] (${arr[write]}) <-> arr[${read}] (${arr[read]})`,
+                  explanation: `Swapped non-zero element ${arr[write]} into write index ${write}.`,
+                  vars: { write, read, swappedVal: arr[write] }
                 });
+
+                steps.push({
+                  lineHighlight: { javascript: 8, python: 9, java: 8, cpp: 8 },
+                  arrayState: arr.map((v, idx) => ({
+                    val: v,
+                    activeClass: idx <= write ? "active-match" : ""
+                  })),
+                  pointers: { "write": write + 1, "read": read },
+                  formula: `write++ (${write + 1})`,
+                  explanation: `Increment write pointer to index ${write + 1}.`,
+                  vars: { write: write + 1, read }
+                });
+
                 write++;
               }
             }
 
             steps.push({
-              lineHighlight: { javascript: 9, python: 7, java: 9, cpp: 9 },
+              lineHighlight: { javascript: 10, python: 9, java: 10, cpp: 10 },
               arrayState: arr.map((v, idx) => ({
                 val: v,
                 activeClass: idx < write ? "active-match" : "active-rejected"
