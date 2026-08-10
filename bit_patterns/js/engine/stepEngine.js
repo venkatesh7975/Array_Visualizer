@@ -149,7 +149,13 @@ const StepEngine = {
 
     // 6. Update Parallel Code Dry Run Card
     const codeDryRunLineBadge = document.getElementById("codeDryRunLineBadge");
-    if (codeDryRunLineBadge) codeDryRunLineBadge.textContent = `Line ${step.codeLine || 1}`;
+    if (codeDryRunLineBadge) {
+      const lang = VisualizationEngine.currentLanguage || "python";
+      const lineNum = (typeof step.codeLine === "object" && step.codeLine !== null)
+        ? (step.codeLine[lang] || step.codeLine["python"] || 1)
+        : (step.codeLine || 1);
+      codeDryRunLineBadge.textContent = `Line ${lineNum}`;
+    }
 
     const codeDryRunOp = document.getElementById("codeDryRunOp");
     if (codeDryRunOp) codeDryRunOp.textContent = step.opSummary || step.action || "";

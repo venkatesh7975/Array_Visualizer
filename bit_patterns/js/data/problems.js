@@ -72,63 +72,133 @@ const PROBLEMS_DATA = {
       let count = 0;
       const originalN = n;
 
-      steps.push({
-        action: "Initialize",
-        formula: `n = ${n} (${BitEngine.toBinaryString(n, 8, true)}) | count = 0`,
-        explanation: `Start with n = ${n}. Binary representation: ${BitEngine.toBinaryString(n, 8, true)}. Initialize count = 0.`,
-        bits: BitEngine.toBitArray(n, 8),
-        decimalVal: n,
-        bitLabel: "Initial n",
-        codeLine: 2,
-        variables: { n: n, count: 0 }
-      });
-
       if (mode === "brute") {
+        steps.push({
+          action: "Initialize Counter",
+          formula: `count = 0 | n = ${n} (${BitEngine.toBinaryString(n, 8, true)})`,
+          explanation: `Initialize 1-bit counter to 0. Input n = ${n}. Binary: ${BitEngine.toBinaryString(n, 8, true)}.`,
+          bits: BitEngine.toBitArray(n, 8),
+          decimalVal: n,
+          codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
+          variables: { n: n, count: 0 }
+        });
+
         for (let i = 0; i < 8; i++) {
           const bitVal = (n >> i) & 1;
-          if (bitVal === 1) count++;
+
           steps.push({
-            action: `Check Bit ${i}`,
-            formula: `(${n} >> ${i}) & 1 = ${bitVal}`,
-            explanation: `Inspecting bit position ${i}: Value is ${bitVal}. ${bitVal === 1 ? "Increment count to " + count : "Skip (bit is 0)"}.`,
+            action: `Loop Bit ${i}`,
+            formula: `Inspect bit pos ${i}: (${n} >> ${i}) & 1 = ${bitVal}`,
+            explanation: `Inspecting bit position ${i}: Value is ${bitVal}. ${bitVal === 1 ? "1-bit found! Will increment count." : "0-bit (skip)."}.`,
             bits: BitEngine.toBitArray(n, 8),
             decimalVal: n,
             activeIndices: [i],
             highlightPos: i,
-            codeLine: 3,
-            variables: { i: i, bit: bitVal, count: count }
+            codeLine: { python: 3, javascript: 3, java: 3, cpp: 3 },
+            variables: { n: n, i: i, bitVal: bitVal, count: count }
           });
+
+          if (bitVal === 1) {
+            count++;
+            steps.push({
+              action: `Bit ${i} is 1 -> Increment Count`,
+              formula: `count += 1 => ${count}`,
+              explanation: `Bit ${i} is 1! Increment count from ${count - 1} to ${count}.`,
+              bits: BitEngine.toBitArray(n, 8),
+              decimalVal: n,
+              activeIndices: [i],
+              highlightPos: i,
+              codeLine: { python: 5, javascript: 5, java: 5, cpp: 5 },
+              variables: { n: n, i: i, bitVal: 1, count: count }
+            });
+          }
         }
-      } else {
+
+        steps.push({
+          action: "Return Final Count",
+          formula: `return count => ${count}`,
+          explanation: `Completed bit inspection. Total set bits in ${originalN} is ${count}.`,
+          bits: BitEngine.toBitArray(n, 8),
+          decimalVal: n,
+          codeLine: { python: 6, javascript: 7, java: 7, cpp: 7 },
+          variables: { n: originalN, count: count }
+        });
+
+      } else { // OPTIMAL: Brian Kernighan
+        steps.push({
+          action: "Initialize Counter",
+          formula: `count = 0 | n = ${n} (${BitEngine.toBinaryString(n, 8, true)})`,
+          explanation: `Start Kernighan Algorithm: Line 2 initializes count = 0. Input n = ${n} (${BitEngine.toBinaryString(n, 8, true)}).`,
+          bits: BitEngine.toBitArray(n, 8),
+          decimalVal: n,
+          codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
+          variables: { n: n, count: 0 }
+        });
+
+        let iter = 0;
         while (n > 0) {
+          iter++;
+          steps.push({
+            action: `Iteration ${iter}: While Loop Check`,
+            formula: `n = ${n} > 0 => TRUE (Continue loop)`,
+            explanation: `Line 3: Condition check: n = ${n} (${BitEngine.toBinaryString(n, 8, true)}) is non-zero (True). Proceeding into loop iteration ${iter}.`,
+            bits: BitEngine.toBitArray(n, 8),
+            decimalVal: n,
+            codeLine: { python: 3, javascript: 3, java: 3, cpp: 3 },
+            variables: { n: n, count: count }
+          });
+
           const kStep = BitEngine.performKernighanStep(n, 8);
-          count++;
+          n = kStep.result;
+
           steps.push({
             type: "kernighan",
-            action: `Kernighan Iteration ${count}`,
-            formula: `n &= n - 1  =>  ${kStep.n} & ${kStep.nMinus1} = ${kStep.result}`,
-            explanation: `Kernighan Step ${count}: n = ${kStep.n} (${kStep.binaryN}). n - 1 = ${kStep.nMinus1} (${kStep.binaryNMinus1}). Cleared lowest set bit at pos ${kStep.lowestSetBitPos}. New n = ${kStep.result}. Count = ${count}.`,
+            action: `Iteration ${iter}: Clear Lowest Set Bit`,
+            formula: `n &= (n - 1)  =>  ${kStep.n} & ${kStep.nMinus1} = ${kStep.result}`,
+            explanation: `Line 4: Execute n &= (n - 1). Bitwise AND of ${kStep.n} (${kStep.binaryN}) & ${kStep.nMinus1} (${kStep.binaryNMinus1}) = ${kStep.result} (${BitEngine.toBinaryString(kStep.result, 8, true)}). Cleared lowest 1-bit at pos ${kStep.lowestSetBitPos}!`,
             n: kStep.n,
             nMinus1: kStep.nMinus1,
             result: kStep.result,
             lowestSetBitPos: kStep.lowestSetBitPos,
             bitLength: 8,
-            codeLine: 4,
+            codeLine: { python: 4, javascript: 4, java: 4, cpp: 4 },
             variables: { n: kStep.result, "n - 1": kStep.nMinus1, count: count }
           });
-          n = kStep.result;
-        }
-      }
 
-      steps.push({
-        action: "Completed",
-        formula: `Total 1-bits = ${count}`,
-        explanation: `Execution completed! Number of 1 bits in ${originalN} is ${count}.`,
-        bits: BitEngine.toBitArray(n, 8),
-        decimalVal: n,
-        codeLine: 6,
-        variables: { n: n, count: count }
-      });
+          count++;
+          steps.push({
+            action: `Iteration ${iter}: Increment Count`,
+            formula: `count += 1  =>  ${count}`,
+            explanation: `Line 5: Increment count from ${count - 1} to ${count}. Total 1-bits found so far = ${count}.`,
+            bits: BitEngine.toBitArray(kStep.result, 8),
+            decimalVal: kStep.result,
+            codeLine: { python: 5, javascript: 5, java: 5, cpp: 5 },
+            variables: { n: kStep.result, count: count }
+          });
+        }
+
+        if (originalN === 0) {
+          steps.push({
+            action: "Loop Condition False",
+            formula: `n = 0 => FALSE (Exit loop)`,
+            explanation: `Line 3: Condition check: n = 0 is zero (False). Exit while loop.`,
+            bits: BitEngine.toBitArray(0, 8),
+            decimalVal: 0,
+            codeLine: { python: 3, javascript: 3, java: 3, cpp: 3 },
+            variables: { n: 0, count: 0 }
+          });
+        }
+
+        steps.push({
+          action: "Return Result",
+          formula: `return count => ${count}`,
+          explanation: `Line 6: Return count = ${count}. Total set bits in ${originalN} is ${count}.`,
+          bits: BitEngine.toBitArray(0, 8),
+          decimalVal: 0,
+          codeLine: { python: 6, javascript: 7, java: 7, cpp: 7 },
+          variables: { n: originalN, count: count }
+        });
+      }
 
       return steps;
     }
@@ -186,7 +256,6 @@ const PROBLEMS_DATA = {
       let num = inputVal !== null && !isNaN(inputVal) ? parseInt(inputVal) : 5;
       const steps = [];
 
-      // Exact binary length calculation without forcing minimum 3 bits
       const bitLen = Math.max(1, num.toString(2).length);
       const mask = (1 << bitLen) - 1;
       const res = num ^ mask;

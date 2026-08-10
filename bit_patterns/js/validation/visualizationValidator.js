@@ -41,8 +41,9 @@ const VisualizationValidator = {
 
         // 4. Validate Code Line Index
         if (step.codeLine !== undefined && prob.code && prob.code.python) {
+          const lineVal = typeof step.codeLine === "object" && step.codeLine !== null ? step.codeLine.python : step.codeLine;
           const maxLines = prob.code.python.length;
-          assert(step.codeLine >= 1 && step.codeLine <= maxLines, `LC #${prob.lcNum} Step ${idx + 1}: codeLine ${step.codeLine} out of bounds (1..${maxLines})`);
+          assert(lineVal >= 1 && lineVal <= maxLines, `LC #${prob.lcNum} Step ${idx + 1}: codeLine ${lineVal} out of bounds (1..${maxLines})`);
         }
 
         // 5. Validate Variable Consistency (Decimal vs Binary string matching)

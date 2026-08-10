@@ -288,10 +288,13 @@
   color: var(--text-muted);
   user-select: none;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .line-code {
   flex: 1;
+  white-space: pre;
+  tab-size: 4;
 }
 
 /* SYNTAX COLORS */

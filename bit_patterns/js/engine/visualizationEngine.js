@@ -273,13 +273,17 @@ const VisualizationEngine = {
 
     const lang = this.currentLanguage || "python";
     const codeLines = codeObj[lang] || codeObj["python"] || [];
+    
+    const activeLine = (typeof currentLineIndex === "object" && currentLineIndex !== null)
+      ? (currentLineIndex[lang] || currentLineIndex["python"] || 1)
+      : currentLineIndex;
 
     const pre = document.createElement("pre");
     pre.className = "code-block";
 
     codeLines.forEach((lineText, idx) => {
       const lineNum = idx + 1;
-      const isActive = lineNum === currentLineIndex;
+      const isActive = lineNum === activeLine;
       const highlightedLine = this.highlightSyntax(lineText, lang);
 
       const lineDiv = document.createElement("div");
