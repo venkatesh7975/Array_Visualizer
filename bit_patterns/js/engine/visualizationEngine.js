@@ -265,9 +265,9 @@ const VisualizationEngine = {
   },
 
   /**
-   * Renders Synchronized Multi-Language Code Block with highlighted current line
+   * Renders Synchronized Multi-Language Code Block with COLORFUL SYNTAX HIGHLIGHTING & active line
    */
-  renderSynchronizedCode(container, codeObj, currentLineIndex = 0) {
+  renderSynchronizedCode(container, codeObj, currentLineIndex = 1) {
     if (!container || !codeObj) return;
     container.innerHTML = "";
 
@@ -278,16 +278,88 @@ const VisualizationEngine = {
     pre.className = "code-block";
 
     codeLines.forEach((lineText, idx) => {
+      const lineNum = idx + 1;
+      const isActive = lineNum === currentLineIndex;
+      const highlightedLine = this.highlightSyntax(lineText, lang);
+
       const lineDiv = document.createElement("div");
-      lineDiv.className = `code-line ${idx + 1 === currentLineIndex ? "active-line" : ""}`;
+      lineDiv.className = `code-line ${isActive ? "active-line" : ""}`;
       lineDiv.innerHTML = `
-        <span class="line-num">${idx + 1}</span>
-        <span class="line-code">${this.escapeHtml(lineText)}</span>
+        <span class="line-num">${lineNum}</span>
+        <span class="line-code">${highlightedLine}</span>
       `;
       pre.appendChild(lineDiv);
     });
 
     container.appendChild(pre);
+
+    // Scroll active line into view smoothly
+    const activeLineElem = container.querySelector(".active-line");
+    if (activeLineElem) {
+      activeLineElem.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  },
+
+  /**
+   * Colorful Syntax Highlighting Tokenizer matching Array Patterns
+   */
+  highlightSyntax(line, lang) {
+    if (!line) return "";
+
+    const keywords = new Set([
+      "function", "let", "const", "var", "if", "else", "for", "while", "return", "class", "new",
+      "def", "import", "from", "in", "and", "or", "not", "is", "elif",
+      "public", "private", "protected", "static", "void", "int", "double", "float", "boolean", "long", "uint32_t", "unsigned",
+      "auto", "vector", "string", "struct", "template", "typename", "push_back", "append", "bool", "True", "False"
+    ]);
+
+    const types = new Set([
+      "number", "boolean", "string", "int", "double", "float", "char", "vector", "Map", "Set", "HashMap", "ArrayList", "unordered_map", "List", "Array", "uint32_t"
+    ]);
+
+    const tokenRegex = /(\/\/[^\n]*|#[^\n]*)|(["'`].*?["'`])|(\b\d+\b)|(\b[a-zA-Z_]\w*\b)/g;
+
+    let result = "";
+    let lastIndex = 0;
+    let match;
+
+    while ((match = tokenRegex.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        result += this.escapeHtml(line.slice(lastIndex, match.index));
+      }
+
+      const [fullMatch, comment, str, num, word] = match;
+
+      if (comment) {
+        result += `<span class="syn-comment">${this.escapeHtml(comment)}</span>`;
+      } else if (str) {
+        result += `<span class="syn-string">${this.escapeHtml(str)}</span>`;
+      } else if (num) {
+        result += `<span class="syn-num">${this.escapeHtml(num)}</span>`;
+      } else if (word) {
+        if (keywords.has(word)) {
+          result += `<span class="syn-kw">${this.escapeHtml(word)}</span>`;
+        } else if (types.has(word)) {
+          result += `<span class="syn-type">${this.escapeHtml(word)}</span>`;
+        } else {
+          const nextCharIdx = match.index + word.length;
+          const remaining = line.slice(nextCharIdx).trimStart();
+          if (remaining.startsWith("(")) {
+            result += `<span class="syn-func">${this.escapeHtml(word)}</span>`;
+          } else {
+            result += this.escapeHtml(word);
+          }
+        }
+      }
+
+      lastIndex = tokenRegex.lastIndex;
+    }
+
+    if (lastIndex < line.length) {
+      result += this.escapeHtml(line.slice(lastIndex));
+    }
+
+    return result;
   },
 
   escapeHtml(str) {
