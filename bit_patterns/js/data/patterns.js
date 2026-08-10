@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BIT MANIPULATION PATTERNS DATASET — 12 CORE PATTERNS & QUIZZES
+   BIT MANIPULATION PATTERNS DATASET — 12 CORE PATTERNS & COMPLETE QUIZZES
    ========================================================================== */
 
 const PATTERNS_DATA = {
@@ -134,6 +134,12 @@ def is_odd(n):
         ],
         ans: 0,
         exp: "Since all higher bits represent powers of 2 (2, 4, 8, 16...), only the 0-th bit determines oddness."
+      },
+      {
+        q: "What is 14 & 1 equal to?",
+        options: ["0 (Even)", "1 (Odd)", "14", "7"],
+        ans: 0,
+        exp: "14 in binary is 1110. The LSB is 0, so 14 & 1 = 0 (Even)."
       }
     ]
   },
@@ -171,6 +177,17 @@ def is_power_of_four(n):
         ],
         ans: 0,
         exp: "For n = 8 (1000), n - 1 = 7 (0111). 1000 & 0111 = 0000."
+      },
+      {
+        q: "What additional bitmask check distinguishes Power of Four from Power of Two?",
+        options: [
+          "n & 0x55555555 != 0",
+          "n & 1 == 1",
+          "n & 0xAAAAAAAA != 0",
+          "n >> 2 == 0"
+        ],
+        ans: 0,
+        exp: "0x55555555 has 1s at odd bit positions (0, 2, 4, 6...), matching powers of 4 (4^0=1, 4^1=4, 4^2=16)."
       }
     ]
   },
@@ -202,6 +219,17 @@ def is_power_of_four(n):
         options: ["4", "0", "1", "2"],
         ans: 0,
         exp: "By commutativity: (1^1) ^ (2^2) ^ 4 = 0 ^ 0 ^ 4 = 4."
+      },
+      {
+        q: "How does in-place XOR swap work without a temp variable?",
+        options: [
+          "a ^= b; b ^= a; a ^= b;",
+          "a &= b; b |= a;",
+          "a <<= b; b >>= a;",
+          "a = a + b - a;"
+        ],
+        ans: 0,
+        exp: "XOR swap exchanges values by cancelling common bit patterns in 3 steps."
       }
     ]
   },
@@ -249,6 +277,12 @@ def is_power_of_four(n):
         ],
         ans: 0,
         exp: "In 2's complement, -x = ~x + 1. x & -x isolates the rightmost set bit."
+      },
+      {
+        q: "In Single Number II (every number 3x except one 1x), what modulo is used on bit sums?",
+        options: ["Modulo 3", "Modulo 2", "Modulo 4", "Modulo 10"],
+        ans: 0,
+        exp: "Summing 1-bits at position k for 3x duplicates results in a multiple of 3. Modulo 3 yields the bit of the unique number."
       }
     ]
   },
@@ -282,6 +316,12 @@ def is_power_of_four(n):
         options: ["3 iterations", "11 iterations", "4 iterations", "32 iterations"],
         ans: 0,
         exp: "1011 has three 1-bits. Each loop clears one 1-bit, so it takes exactly 3 iterations."
+      },
+      {
+        q: "What is the Hamming Distance between 1 (0001) and 4 (0100)?",
+        options: ["2", "1", "3", "4"],
+        ans: 0,
+        exp: "1 ^ 4 = 0101, which has two 1-bits (bits 0 and 2 differ)."
       }
     ]
   },
@@ -315,6 +355,12 @@ def is_power_of_four(n):
         options: ["1011 (11)", "1101 (13)", "1000 (8)", "1111 (15)"],
         ans: 0,
         exp: "12 is 1100. Subtracting 1 flips the lowest set bit and all lower bits: 1011 (11)."
+      },
+      {
+        q: "What is the time complexity of Brian Kernighan's algorithm?",
+        options: ["O(k) where k = number of set bits", "O(N)", "O(N^2)", "O(log N)"],
+        ans: 0,
+        exp: "Kernighan's algorithm performs 1 operation per set bit, taking O(k) time."
       }
     ]
   },
@@ -347,6 +393,12 @@ def is_power_of_four(n):
         options: ["(1 << 4) - 1 = 15 (1111)", "1 << 4 = 16", "4 & 1", "4 ^ 15"],
         ans: 0,
         exp: "(1 << 4) = 16 (10000). Subtracting 1 gives 15 (01111), which has 4 ones."
+      },
+      {
+        q: "How do you check if item i is visited in a bitmask state?",
+        options: ["(state >> i) & 1 == 1", "state | (1 << i)", "state ^ i", "state == i"],
+        ans: 0,
+        exp: "(state >> i) & 1 isolates the i-th bit to verify if it is 1."
       }
     ]
   },
@@ -385,6 +437,12 @@ def is_power_of_four(n):
         options: ["8 (2^3)", "6", "3", "9"],
         ans: 0,
         exp: "Each element has 2 choices (include/exclude), so 2 * 2 * 2 = 8 subsets."
+      },
+      {
+        q: "For mask 5 (101 in binary), which elements of [a, b, c] are selected?",
+        options: ["[a, c]", "[b]", "[a, b]", "[a, b, c]"],
+        ans: 0,
+        exp: "Bit 0 is 1 (a), Bit 1 is 0 (b), Bit 2 is 1 (c). So subset is [a, c]."
       }
     ]
   },
@@ -418,6 +476,17 @@ def is_power_of_four(n):
         options: ["100 (4)", "101 (5)", "111 (7)", "000 (0)"],
         ans: 0,
         exp: "5 & 6 & 7 = 101 & 110 & 111 = 100 = 4."
+      },
+      {
+        q: "Why do lower bits turn to 0 in the bitwise AND of a range of consecutive numbers?",
+        options: [
+          "Because consecutive numbers flip bits 0 -> 1 -> 0, causing at least one 0 at each lower position",
+          "Because AND always produces 0",
+          "Because of integer overflow",
+          "Because of parity checks"
+        ],
+        ans: 0,
+        exp: "In any range > 1, consecutive numbers toggle LSBs between 0 and 1, forcing AND to 0 for changing bits."
       }
     ]
   },
@@ -455,6 +524,17 @@ def is_power_of_four(n):
         ],
         ans: 0,
         exp: "`res << 1` shifts previous bits left, making LSB 0. `| (n & 1)` sets LSB to the read bit."
+      },
+      {
+        q: "Why is 32-bit fixed width padding essential for LeetCode 190 Reverse Bits?",
+        options: [
+          "Leading zeros in input become trailing zeros in output (e.g. 00000001 -> 10000000)",
+          "To avoid negative numbers",
+          "Because Python only supports 32-bit integers",
+          "Because bitwise operators require 64 bits"
+        ],
+        ans: 0,
+        exp: "Bit reversal is position-sensitive across all 32 bits. 1 (0...0001) reversed becomes 2^31 (1000...0)."
       }
     ]
   }

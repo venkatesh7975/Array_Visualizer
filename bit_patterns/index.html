@@ -73,6 +73,7 @@
             <button class="tab-btn" data-tab="tab-mistakes">Mistakes</button>
             <button class="tab-btn" data-tab="tab-quiz">Quiz</button>
             <button class="tab-btn" data-tab="tab-playground">Bit Playground</button>
+            <button class="tab-btn" data-tab="tab-audit" style="color: var(--accent-green);">🛡️ Audit</button>
           </nav>
         </div>
         <div style="display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0; margin-left: 0.4rem;">
@@ -200,6 +201,19 @@
               </div>
               <div id="playgroundCanvas" style="margin-top: 1rem;"></div>
               <div id="truthTableGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.4rem; margin-top: 0.75rem;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AUDIT DASHBOARD TAB -->
+        <div id="tab-audit" class="tab-content">
+          <div class="quiz-card" style="border-left: 4px solid var(--accent-green);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+              <h3 style="font-size: 0.95rem; font-weight: 900; color: var(--accent-green);">🛡️ Correctness Audit Dashboard</h3>
+              <button id="runAuditBtn" class="ctrl-btn ctrl-primary" style="font-size: 0.75rem;">▶ Run Full Audit</button>
+            </div>
+            <div id="auditDashboardBox" style="font-family: var(--font-code); font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
+              <p>Click 'Run Full Audit' to execute 9,600+ differential tests, property tests, and visualization transitions live.</p>
             </div>
           </div>
         </div>
@@ -413,6 +427,12 @@
   <script src="js/engine/panelResizer.js"></script>
   <script src="js/data/patterns.js"></script>
   <script src="js/data/problems.js"></script>
+  <script src="js/validation/referenceSolutions.js"></script>
+  <script src="js/validation/problemValidator.js"></script>
+  <script src="js/validation/bitOperationValidator.js"></script>
+  <script src="js/validation/visualizationValidator.js"></script>
+  <script src="js/validation/outputValidator.js"></script>
+  <script src="js/validation/auditRunner.js"></script>
   <script src="js/playground.js"></script>
   <script src="js/app.js"></script>
 

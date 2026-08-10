@@ -186,8 +186,8 @@ const PROBLEMS_DATA = {
       let num = inputVal !== null && !isNaN(inputVal) ? parseInt(inputVal) : 5;
       const steps = [];
 
-      // Determine bit length of num
-      const bitLen = Math.max(3, num.toString(2).length);
+      // Exact binary length calculation without forcing minimum 3 bits
+      const bitLen = Math.max(1, num.toString(2).length);
       const mask = (1 << bitLen) - 1;
       const res = num ^ mask;
 
@@ -292,28 +292,40 @@ const PROBLEMS_DATA = {
         resultNum: diff,
         bitLength: 8,
         codeLine: 2,
-        variables: { start: start, goal: goal, diff: diff }
+        variables: { start: start, goal: goal, diff: diff, bitFlipsCount: 0 }
       });
 
       let d = diff;
       let count = 0;
-      while (d > 0) {
-        const kStep = BitEngine.performKernighanStep(d, 8);
-        count++;
+      if (d === 0) {
         steps.push({
-          type: "kernighan",
-          action: `Count Mismatched Bit ${count}`,
-          formula: `diff &= diff - 1 => ${kStep.result}`,
-          explanation: `Step ${count + 1}: Kernighan iteration ${count}. Cleared mismatched bit at pos ${kStep.lowestSetBitPos}. Remaining diff = ${kStep.result}. Count = ${count}.`,
-          n: kStep.n,
-          nMinus1: kStep.nMinus1,
-          result: kStep.result,
-          lowestSetBitPos: kStep.lowestSetBitPos,
-          bitLength: 8,
-          codeLine: 5,
-          variables: { diff: kStep.result, bitFlipsCount: count }
+          action: "Completed",
+          formula: `start === goal => 0 bit flips needed`,
+          explanation: `start and goal are identical. Total 0 bit flips required.`,
+          bits: BitEngine.toBitArray(0, 8),
+          decimalVal: 0,
+          codeLine: 7,
+          variables: { start: start, goal: goal, diff: 0, bitFlipsCount: 0 }
         });
-        d = kStep.result;
+      } else {
+        while (d > 0) {
+          const kStep = BitEngine.performKernighanStep(d, 8);
+          count++;
+          steps.push({
+            type: "kernighan",
+            action: `Count Mismatched Bit ${count}`,
+            formula: `diff &= diff - 1 => ${kStep.result}`,
+            explanation: `Step ${count + 1}: Kernighan iteration ${count}. Cleared mismatched bit at pos ${kStep.lowestSetBitPos}. Remaining diff = ${kStep.result}. Count = ${count}.`,
+            n: kStep.n,
+            nMinus1: kStep.nMinus1,
+            result: kStep.result,
+            lowestSetBitPos: kStep.lowestSetBitPos,
+            bitLength: 8,
+            codeLine: 5,
+            variables: { diff: kStep.result, bitFlipsCount: count }
+          });
+          d = kStep.result;
+        }
       }
 
       return steps;
@@ -980,6 +992,86 @@ const PROBLEMS_DATA = {
       });
 
       return steps;
+    }
+  },
+
+  // =========================================================================
+  // PATTERN 12: REVERSE BITS & BIT CONSTRUCTION (FIXED 32-BIT WIDTH FOR LC 190)
+  // =========================================================================
+
+  111: {
+    id: 111,
+    patternId: 12,
+    lcNum: 190,
+    title: "Reverse Bits (32-Bit Fixed Width)",
+    difficulty: "Easy",
+    statement: "Reverse bits of a given 32-bit unsigned integer. Note that in some languages such as Java, there is no unsigned integer type. In this case, both input and output will be given as signed integers.",
+    examples: "Input: n = 43261596 (00000010100101000001111010011100)\nOutput: 964176192 (00111001011110000010100101000000)",
+    constraints: ["The input must be a 32-bit unsigned integer."],
+    bruteDesc: "Convert 32-bit string, reverse string, parse back as unsigned integer.",
+    bruteTime: "O(32)",
+    bruteSpace: "O(32)",
+    optimalDesc: "Fixed 32-bit loop: Extract LSB with (n & 1), shift result left by 1 and OR LSB, shift n right by 1.",
+    optimalTime: "O(32) = O(1)",
+    optimalSpace: "O(1)",
+    defaultInput: 43261596,
+    code: {
+      python: [
+        "def reverseBits(n: int) -> int:",
+        "    result = 0",
+        "    for _ in range(32):",
+        "        result = (result << 1) | (n & 1)",
+        "        n >>= 1",
+        "    return result"
+      ],
+      javascript: [
+        "function reverseBits(n) {",
+        "    let result = 0;",
+        "    for (let i = 0; i < 32; i++) {",
+        "        result = (result << 1) | (n & 1);",
+        "        n >>>= 1;",
+        "    }",
+        "    return result >>> 0;",
+        "}"
+      ],
+      java: [
+        "public int reverseBits(int n) {",
+        "    int result = 0;",
+        "    for (int i = 0; i < 32; i++) {",
+        "        result = (result << 1) | (n & 1);",
+        "        n >>>= 1;",
+        "    }",
+        "    return result;",
+        "}"
+      ],
+      cpp: [
+        "uint32_t reverseBits(uint32_t n) {",
+        "    uint32_t result = 0;",
+        "    for (int i = 0; i < 32; i++) {",
+        "        result = (result << 1) | (n & 1);",
+        "        n >>= 1;",
+        "    }",
+        "    return result;",
+        "}"
+      ]
+    },
+    generateSteps(inputVal) {
+      let n = inputVal !== null && !isNaN(inputVal) ? (parseInt(inputVal) >>> 0) : 43261596;
+      const trace = BitEngine.getReverseBitsTrace(n, 32);
+
+      return trace.map((t, idx) => ({
+        action: idx === 0 ? "Initialize 32-bit" : `Step ${idx}/32`,
+        formula: `Read LSB = ${t.bitRead !== null ? t.bitRead : "-"} | Output = ${t.currentResult}`,
+        explanation: t.explanation,
+        bits: BitEngine.toBitArray(t.currentResult, 32),
+        decimalVal: t.currentResult,
+        bitLabel: "Reversed Output (32-bit)",
+        auxBits: BitEngine.toBitArray(t.currentInput, 32),
+        auxLabel: "Input n (32-bit)",
+        auxDec: t.currentInput,
+        codeLine: idx === 0 ? 2 : 4,
+        variables: { input: t.currentInput, result: t.currentResult, readBit: t.bitRead }
+      }));
     }
   }
 };
