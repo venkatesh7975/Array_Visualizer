@@ -67,30 +67,31 @@ const PROBLEMS_DATA = {
       ]
     },
     generateSteps(inputVal, targetVal, mode = "optimal") {
-      let n = inputVal !== null && !isNaN(inputVal) ? parseInt(inputVal) : 11;
+      let n = inputVal !== null && !isNaN(inputVal) ? (parseInt(inputVal) >>> 0) : 11;
       const steps = [];
       let count = 0;
       const originalN = n;
+      const bitLen = n > 255 ? 32 : 8;
 
       if (mode === "brute") {
         steps.push({
           action: "Initialize Counter",
-          formula: `count = 0 | n = ${n} (${BitEngine.toBinaryString(n, 8, true)})`,
-          explanation: `Initialize 1-bit counter to 0. Input n = ${n}. Binary: ${BitEngine.toBinaryString(n, 8, true)}.`,
-          bits: BitEngine.toBitArray(n, 8),
+          formula: `count = 0 | n = ${n} (${BitEngine.toBinaryString(n, bitLen, true)})`,
+          explanation: `Initialize 1-bit counter to 0. Input n = ${n}. Binary: ${BitEngine.toBinaryString(n, bitLen, true)}.`,
+          bits: BitEngine.toBitArray(n, bitLen),
           decimalVal: n,
           codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
           variables: { n: n, count: 0 }
         });
 
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < bitLen; i++) {
           const bitVal = (n >> i) & 1;
 
           steps.push({
             action: `Loop Bit ${i}`,
             formula: `Inspect bit pos ${i}: (${n} >> ${i}) & 1 = ${bitVal}`,
             explanation: `Inspecting bit position ${i}: Value is ${bitVal}. ${bitVal === 1 ? "1-bit found! Will increment count." : "0-bit (skip)."}.`,
-            bits: BitEngine.toBitArray(n, 8),
+            bits: BitEngine.toBitArray(n, bitLen),
             decimalVal: n,
             activeIndices: [i],
             highlightPos: i,
@@ -104,7 +105,7 @@ const PROBLEMS_DATA = {
               action: `Bit ${i} is 1 -> Increment Count`,
               formula: `count += 1 => ${count}`,
               explanation: `Bit ${i} is 1! Increment count from ${count - 1} to ${count}.`,
-              bits: BitEngine.toBitArray(n, 8),
+              bits: BitEngine.toBitArray(n, bitLen),
               decimalVal: n,
               activeIndices: [i],
               highlightPos: i,
@@ -118,7 +119,7 @@ const PROBLEMS_DATA = {
           action: "Return Final Count",
           formula: `return count => ${count}`,
           explanation: `Completed bit inspection. Total set bits in ${originalN} is ${count}.`,
-          bits: BitEngine.toBitArray(n, 8),
+          bits: BitEngine.toBitArray(n, bitLen),
           decimalVal: n,
           codeLine: { python: 6, javascript: 7, java: 7, cpp: 7 },
           variables: { n: originalN, count: count }
@@ -127,9 +128,9 @@ const PROBLEMS_DATA = {
       } else { // OPTIMAL: Brian Kernighan
         steps.push({
           action: "Initialize Counter",
-          formula: `count = 0 | n = ${n} (${BitEngine.toBinaryString(n, 8, true)})`,
-          explanation: `Start Kernighan Algorithm: Line 2 initializes count = 0. Input n = ${n} (${BitEngine.toBinaryString(n, 8, true)}).`,
-          bits: BitEngine.toBitArray(n, 8),
+          formula: `count = 0 | n = ${n} (${BitEngine.toBinaryString(n, bitLen, true)})`,
+          explanation: `Start Kernighan Algorithm: Line 2 initializes count = 0. Input n = ${n} (${BitEngine.toBinaryString(n, bitLen, true)}).`,
+          bits: BitEngine.toBitArray(n, bitLen),
           decimalVal: n,
           codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
           variables: { n: n, count: 0 }
@@ -141,26 +142,26 @@ const PROBLEMS_DATA = {
           steps.push({
             action: `Iteration ${iter}: While Loop Check`,
             formula: `n = ${n} > 0 => TRUE (Continue loop)`,
-            explanation: `Line 3: Condition check: n = ${n} (${BitEngine.toBinaryString(n, 8, true)}) is non-zero (True). Proceeding into loop iteration ${iter}.`,
-            bits: BitEngine.toBitArray(n, 8),
+            explanation: `Line 3: Condition check: n = ${n} (${BitEngine.toBinaryString(n, bitLen, true)}) is non-zero (True). Proceeding into loop iteration ${iter}.`,
+            bits: BitEngine.toBitArray(n, bitLen),
             decimalVal: n,
             codeLine: { python: 3, javascript: 3, java: 3, cpp: 3 },
             variables: { n: n, count: count }
           });
 
-          const kStep = BitEngine.performKernighanStep(n, 8);
+          const kStep = BitEngine.performKernighanStep(n, bitLen);
           n = kStep.result;
 
           steps.push({
             type: "kernighan",
             action: `Iteration ${iter}: Clear Lowest Set Bit`,
             formula: `n &= (n - 1)  =>  ${kStep.n} & ${kStep.nMinus1} = ${kStep.result}`,
-            explanation: `Line 4: Execute n &= (n - 1). Bitwise AND of ${kStep.n} (${kStep.binaryN}) & ${kStep.nMinus1} (${kStep.binaryNMinus1}) = ${kStep.result} (${BitEngine.toBinaryString(kStep.result, 8, true)}). Cleared lowest 1-bit at pos ${kStep.lowestSetBitPos}!`,
+            explanation: `Line 4: Execute n &= (n - 1). Bitwise AND of ${kStep.n} (${kStep.binaryN}) & ${kStep.nMinus1} (${kStep.binaryNMinus1}) = ${kStep.result} (${BitEngine.toBinaryString(kStep.result, bitLen, true)}). Cleared lowest 1-bit at pos ${kStep.lowestSetBitPos}!`,
             n: kStep.n,
             nMinus1: kStep.nMinus1,
             result: kStep.result,
             lowestSetBitPos: kStep.lowestSetBitPos,
-            bitLength: 8,
+            bitLength: bitLen,
             codeLine: { python: 4, javascript: 4, java: 4, cpp: 4 },
             variables: { n: kStep.result, "n - 1": kStep.nMinus1, count: count }
           });
@@ -170,7 +171,7 @@ const PROBLEMS_DATA = {
             action: `Iteration ${iter}: Increment Count`,
             formula: `count += 1  =>  ${count}`,
             explanation: `Line 5: Increment count from ${count - 1} to ${count}. Total 1-bits found so far = ${count}.`,
-            bits: BitEngine.toBitArray(kStep.result, 8),
+            bits: BitEngine.toBitArray(kStep.result, bitLen),
             decimalVal: kStep.result,
             codeLine: { python: 5, javascript: 5, java: 5, cpp: 5 },
             variables: { n: kStep.result, count: count }
@@ -182,7 +183,7 @@ const PROBLEMS_DATA = {
             action: "Loop Condition False",
             formula: `n = 0 => FALSE (Exit loop)`,
             explanation: `Line 3: Condition check: n = 0 is zero (False). Exit while loop.`,
-            bits: BitEngine.toBitArray(0, 8),
+            bits: BitEngine.toBitArray(0, bitLen),
             decimalVal: 0,
             codeLine: { python: 3, javascript: 3, java: 3, cpp: 3 },
             variables: { n: 0, count: 0 }
@@ -193,7 +194,7 @@ const PROBLEMS_DATA = {
           action: "Return Result",
           formula: `return count => ${count}`,
           explanation: `Line 6: Return count = ${count}. Total set bits in ${originalN} is ${count}.`,
-          bits: BitEngine.toBitArray(0, 8),
+          bits: BitEngine.toBitArray(0, bitLen),
           decimalVal: 0,
           codeLine: { python: 6, javascript: 7, java: 7, cpp: 7 },
           variables: { n: originalN, count: count }
@@ -227,7 +228,6 @@ const PROBLEMS_DATA = {
     code: {
       python: [
         "def findComplement(num: int) -> int:",
-        "    # Create mask of 1s matching bit length of num",
         "    mask = (1 << num.bit_length()) - 1",
         "    return num ^ mask"
       ],
@@ -246,9 +246,9 @@ const PROBLEMS_DATA = {
       ],
       cpp: [
         "int findComplement(int num) {",
-        "    unsigned int mask = ~0;",
-        "    while (num & mask) mask <<= 1;",
-        "    return ~num & ~mask;",
+        "    unsigned int mask = 1;",
+        "    while (mask < (unsigned int)num) mask = (mask << 1) | 1;",
+        "    return num ^ mask;",
         "}"
       ]
     },
@@ -270,7 +270,7 @@ const PROBLEMS_DATA = {
         opSymbol: "^ (XOR)",
         resultNum: res,
         bitLength: bitLen,
-        codeLine: 3,
+        codeLine: { python: 2, javascript: 3, java: 2, cpp: 3 },
         variables: { num: num, mask: mask, bitLength: bitLen }
       });
 
@@ -284,7 +284,7 @@ const PROBLEMS_DATA = {
         opSymbol: "^ (XOR)",
         resultNum: res,
         bitLength: bitLen,
-        codeLine: 4,
+        codeLine: { python: 3, javascript: 4, java: 3, cpp: 4 },
         variables: { num: num, complement: res }
       });
 
@@ -360,7 +360,7 @@ const PROBLEMS_DATA = {
         opSymbol: "^ (XOR)",
         resultNum: diff,
         bitLength: 8,
-        codeLine: 2,
+        codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
         variables: { start: start, goal: goal, diff: diff, bitFlipsCount: 0 }
       });
 
@@ -373,7 +373,7 @@ const PROBLEMS_DATA = {
           explanation: `start and goal are identical. Total 0 bit flips required.`,
           bits: BitEngine.toBitArray(0, 8),
           decimalVal: 0,
-          codeLine: 7,
+          codeLine: { python: 7, javascript: 7, java: 2, cpp: 2 },
           variables: { start: start, goal: goal, diff: 0, bitFlipsCount: 0 }
         });
       } else {
@@ -390,7 +390,7 @@ const PROBLEMS_DATA = {
             result: kStep.result,
             lowestSetBitPos: kStep.lowestSetBitPos,
             bitLength: 8,
-            codeLine: 5,
+            codeLine: { python: 5, javascript: 5, java: 2, cpp: 2 },
             variables: { diff: kStep.result, bitFlipsCount: count }
           });
           d = kStep.result;
@@ -478,7 +478,7 @@ const PROBLEMS_DATA = {
         explanation: `Start with num = ${num}. Binary: ${BitEngine.toBinaryString(num, 8, true)}.`,
         bits: BitEngine.toBitArray(num, 8),
         decimalVal: num,
-        codeLine: 2,
+        codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
         variables: { num: num, steps: 0 }
       });
 
@@ -499,7 +499,7 @@ const PROBLEMS_DATA = {
           bits: BitEngine.toBitArray(num, 8),
           decimalVal: num,
           activeIndices: [0],
-          codeLine: isOdd ? 5 : 7,
+          codeLine: { python: isOdd ? 5 : 7, javascript: isOdd ? 4 : 5, java: isOdd ? 4 : 5, cpp: isOdd ? 4 : 5 },
           variables: { num: num, isOdd: isOdd, steps: stepCount }
         });
       }
@@ -565,7 +565,7 @@ const PROBLEMS_DATA = {
           result: kStep.result,
           lowestSetBitPos: kStep.lowestSetBitPos,
           bitLength: 8,
-          codeLine: 2,
+          codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
           variables: { n: n, isPowerOfTwo: isPower }
         }
       ];
@@ -637,7 +637,7 @@ const PROBLEMS_DATA = {
         bitLength: 8,
         bits: BitEngine.toBitArray(t.currentXor, 8),
         decimalVal: t.currentXor,
-        codeLine: idx === 0 ? 2 : 4,
+        codeLine: { python: idx === 0 ? 2 : 4, javascript: idx === 0 ? 2 : 3, java: idx === 0 ? 2 : 3, cpp: idx === 0 ? 2 : 3 },
         variables: { currentNum: t.numberAdded, accumulatorXor: t.currentXor }
       }));
     }
@@ -729,7 +729,7 @@ const PROBLEMS_DATA = {
         explanation: `XORing all elements yields a ^ b = ${xorAll}.`,
         bits: BitEngine.toBitArray(xorAll, 8),
         decimalVal: xorAll,
-        codeLine: 3,
+        codeLine: { python: 3, javascript: 3, java: 3, cpp: 3 },
         variables: { xorAll: xorAll }
       });
 
@@ -740,7 +740,7 @@ const PROBLEMS_DATA = {
         bits: BitEngine.toBitArray(diff, 8),
         decimalVal: diff,
         activeIndices: [Math.log2(diff)],
-        codeLine: 4,
+        codeLine: { python: 4, javascript: 4, java: 4, cpp: 4 },
         variables: { diff: diff, bitPos: Math.log2(diff) }
       });
 
@@ -754,7 +754,7 @@ const PROBLEMS_DATA = {
           explanation: `Item ${n}: ${(n & diff) ? "Bit is 1 -> XOR into Group A (a = " + a + ")" : "Bit is 0 -> XOR into Group B (b = " + b + ")"}`,
           bits: BitEngine.toBitArray(n, 8),
           decimalVal: n,
-          codeLine: 7,
+          codeLine: { python: 7, javascript: 7, java: 7, cpp: 7 },
           variables: { item: n, groupA: a, groupB: b }
         });
       });
@@ -830,7 +830,7 @@ const PROBLEMS_DATA = {
         explanation: `Initialize ans array of size ${n + 1} with zeros.`,
         bits: BitEngine.toBitArray(0, 8),
         decimalVal: 0,
-        codeLine: 2,
+        codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
         variables: { ans: "[0]" }
       });
 
@@ -842,7 +842,7 @@ const PROBLEMS_DATA = {
           explanation: `i = ${i} (${BitEngine.toBinaryString(i, 8, true)}). Right shift ${i >> 1} has ${ans[i >> 1]} bits + LSB (${i & 1}) = ${ans[i]}.`,
           bits: BitEngine.toBitArray(i, 8),
           decimalVal: i,
-          codeLine: 4,
+          codeLine: { python: 4, javascript: 4, java: 4, cpp: 4 },
           variables: { i: i, "i >> 1": i >> 1, LSB: i & 1, "ans[i]": ans[i] }
         });
       }
@@ -937,7 +937,7 @@ const PROBLEMS_DATA = {
         subset: t.subset,
         elements: nums,
         bitLength: nums.length,
-        codeLine: 5,
+        codeLine: { python: 5, javascript: 7, java: 7, cpp: 7 },
         variables: { mask: t.mask, maskBinary: t.maskBinary, subset: `[${t.subset.join(", ")}]` }
       }));
     }
@@ -1026,7 +1026,7 @@ const PROBLEMS_DATA = {
         auxBits: BitEngine.toBitArray(r, 8),
         auxLabel: "Right",
         auxDec: r,
-        codeLine: 2,
+        codeLine: { python: 2, javascript: 2, java: 2, cpp: 2 },
         variables: { left: l, right: r, shift: 0 }
       });
 
@@ -1044,7 +1044,7 @@ const PROBLEMS_DATA = {
           auxBits: BitEngine.toBitArray(r, 8),
           auxLabel: "Right",
           auxDec: r,
-          codeLine: 4,
+          codeLine: { python: 4, javascript: 4, java: 4, cpp: 4 },
           variables: { left: l, right: r, shift: shift }
         });
       }
@@ -1056,7 +1056,7 @@ const PROBLEMS_DATA = {
         explanation: `Common prefix found! Shift left by ${shift} bits: result = ${res} (${BitEngine.toBinaryString(res, 8, true)}).`,
         bits: BitEngine.toBitArray(res, 8),
         decimalVal: res,
-        codeLine: 7,
+        codeLine: { python: 7, javascript: 7, java: 7, cpp: 7 },
         variables: { commonPrefix: l, shift: shift, result: res }
       });
 
@@ -1138,7 +1138,7 @@ const PROBLEMS_DATA = {
         auxBits: BitEngine.toBitArray(t.currentInput, 32),
         auxLabel: "Input n (32-bit)",
         auxDec: t.currentInput,
-        codeLine: idx === 0 ? 2 : 4,
+        codeLine: { python: idx === 0 ? 2 : 4, javascript: idx === 0 ? 2 : 4, java: idx === 0 ? 2 : 4, cpp: idx === 0 ? 2 : 4 },
         variables: { input: t.currentInput, result: t.currentResult, readBit: t.bitRead }
       }));
     }
