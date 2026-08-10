@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Array Patterns Visualizer — 💎 Glassy Premier DSA Thinking Patterns & 60 LeetCode Problems</title>
-  <meta name="description" content="Interactive luxury visual learning platform for 12 Array Patterns and 60 LeetCode problems with animated step execution, synchronized code line tracking, live variable watching, and pattern quizzes.">
+  <title>Bit Manipulation Patterns Visualizer — 💎 Glassy Premier DSA Masterclass</title>
+  <meta name="description" content="Interactive luxury visual learning platform for 12 Bit Manipulation Patterns and 50+ LeetCode problems with animated 32-bit array execution, bitmask overlays, synchronized code line tracking, and live variable watching.">
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/components.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,14 +16,14 @@
   <!-- TOP HEADER -->
   <header class="app-header">
     <div class="brand-section">
-      <span class="brand-logo">🧩</span>
+      <span class="brand-logo">⚡</span>
       <div style="display: flex; flex-direction: column;">
-        <span class="brand-title">ARRAY PATTERNS</span>
+        <span class="brand-title">BIT PATTERNS</span>
         <span style="font-size: 0.62rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.08em;">DSA VISUAL MASTERCLASS</span>
       </div>
       <span class="brand-badge">💎 Glassy Premier</span>
+      <a href="../array_patterns/index.html" class="brand-badge" style="text-decoration: none; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #ffffff; cursor: pointer;">🧩 Array Patterns Visualizer ➔</a>
       <a href="../index.html" class="brand-badge" style="text-decoration: none; font-weight: 800; background: linear-gradient(135deg, #ec4899, #8b5cf6); color: #ffffff; cursor: pointer;">⚡ Two Sum Masterclass ➔</a>
-      <a href="bit_patterns/index.html" class="brand-badge" style="text-decoration: none; font-weight: 800; background: linear-gradient(135deg, #10b981, #06b6d4); color: #ffffff; cursor: pointer;">⚡ Bit Patterns Visualizer (50+ Problems) ➔</a>
     </div>
 
     <div class="controls-section">
@@ -35,25 +35,27 @@
       </div>
 
       <div class="selector-group">
-        <label for="problemSelect" class="select-label">PROBLEM (1-5)</label>
+        <label for="problemSelect" class="select-label">PROBLEM</label>
         <select id="problemSelect" class="glass-select">
-          <!-- 5 Problems per pattern populated dynamically -->
+          <!-- Problems populated dynamically -->
         </select>
       </div>
     </div>
 
     <div class="badge-group">
       <span id="diffBadge" class="badge badge-easy">Easy</span>
-      <span id="lcNumBadge" class="badge badge-info">LC #1480</span>
-      <span id="timeCompBadge" class="badge badge-info">⏱️ O(N)</span>
+      <span id="lcNumBadge" class="badge badge-info">LC #191</span>
+      <span id="timeCompBadge" class="badge badge-info">⏱️ O(k)</span>
       <span id="spaceCompBadge" class="badge badge-info">💾 O(1)</span>
     </div>
 
     <div class="controls-section">
+      <button id="markCompleteBtn" class="ctrl-btn">○ Mark Complete</button>
       <button id="customInputBtn" class="ctrl-btn" title="Set Custom Input Case">✏️ Custom Input</button>
       <button id="shortcutsBtn" class="ctrl-btn" title="Keyboard Shortcuts (Key: ?)">⌨️ Shortcuts</button>
       <button id="themeToggleBtn" class="ctrl-btn" title="Cycle Glassy / Dark / Light Themes">💎 Glassy Premier</button>
-      <button id="fullscreenBtn" class="ctrl-btn" title="Toggle Fullscreen">⛶</button>
+      <button id="presentationBtn" class="ctrl-btn" title="Toggle Teacher Presentation Mode">🎓 Teacher Mode</button>
+      <button id="fullscreenBtn" class="ctrl-btn" title="Toggle Fullscreen (Key: F)">⛶</button>
     </div>
   </header>
 
@@ -70,11 +72,12 @@
             <button class="tab-btn" data-tab="tab-approaches">Brute vs Optimal</button>
             <button class="tab-btn" data-tab="tab-mistakes">Mistakes</button>
             <button class="tab-btn" data-tab="tab-quiz">Quiz</button>
+            <button class="tab-btn" data-tab="tab-playground">Bit Playground</button>
           </nav>
         </div>
         <div style="display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0; margin-left: 0.4rem;">
-          <button id="leftPresetBtn" class="panel-toggle-btn" title="Cycle Panel Width (260px / 360px / 540px / 70%)">📐 Size</button>
-          <button id="toggleLeftPanelBtn" class="panel-toggle-btn" title="Collapse Left Panel (Ctrl+[)">◀</button>
+          <button id="leftPresetBtn" class="ctrl-btn" style="padding: 0.2rem 0.4rem; font-size: 0.72rem;" title="Cycle Panel Width (260px / 360px / 540px / 70%)">📐 Size</button>
+          <button id="toggleLeftPanelBtn" class="ctrl-btn" style="padding: 0.2rem 0.4rem; font-size: 0.72rem;" title="Collapse Left Panel (Ctrl+[)">◀</button>
         </div>
       </div>
 
@@ -82,22 +85,20 @@
         <!-- OVERVIEW TAB -->
         <div id="tab-overview" class="tab-content active">
           <div class="quiz-card" style="margin-bottom: 1.25rem;">
-            <div style="font-size: 0.72rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem;">QUESTION STATEMENT</div>
-            <h2 id="probTitle" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main); line-height: 1.35;">1480. Running Sum of 1d Array</h2>
+            <div style="font-size: 0.72rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem;">PROBLEM STATEMENT</div>
+            <h2 id="probTitle" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main); line-height: 1.35;">191. Number of 1 Bits</h2>
             <p id="probStatement" style="font-size: 0.88rem; color: var(--text-main); margin-top: 0.6rem; line-height: 1.55; font-weight: 500;"></p>
           </div>
 
           <div class="quiz-card" style="margin-bottom: 1.25rem;">
             <div style="font-size: 0.72rem; font-weight: 800; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem;">EXAMPLE WALKTHROUGH</div>
             <div id="probExamples" style="font-family: var(--font-code); font-size: 0.84rem; color: #ffffff; background: rgba(5,8,14,0.85); padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-glass); margin-top: 0.3rem; white-space: pre-wrap; line-height: 1.5;">
-              <!-- Example content inserted dynamically -->
             </div>
           </div>
 
           <div class="quiz-card">
             <div style="font-size: 0.72rem; font-weight: 800; color: var(--accent-purple); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem;">INPUT CONSTRAINTS</div>
             <ul id="probConstraints" style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.4rem; padding-left: 1.2rem; line-height: 1.6;">
-              <!-- Constraints inserted dynamically -->
             </ul>
           </div>
         </div>
@@ -105,7 +106,7 @@
         <!-- PATTERN GUIDE TAB -->
         <div id="tab-pattern" class="tab-content">
           <div class="quiz-card" style="margin-bottom: 1rem;">
-            <h3 id="patternGuideTitle" style="font-size: 1.05rem; font-weight: 900; color: var(--accent-gold);">Pattern 1: Array Traversal</h3>
+            <h3 id="patternGuideTitle" style="font-size: 1.05rem; font-weight: 900; color: var(--accent-gold);">Pattern 1: Basic Bit Operations</h3>
             <p id="patternGuideDesc" style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.45;"></p>
           </div>
 
@@ -131,13 +132,13 @@
             <div class="quiz-card" style="border-left: 4px solid var(--accent-amber);">
               <h4 style="font-size: 0.92rem; font-weight: 900; color: var(--accent-amber);">🐢 Brute Force Approach</h4>
               <p id="bruteDesc" style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.45;"></p>
-              <div style="font-family: var(--font-code); font-size: 0.8rem; color: var(--accent-cyan); margin-top: 0.6rem; font-weight: 700;">Time: <span id="bruteTime">O(N²)</span> | Space: <span id="bruteSpace">O(1)</span></div>
+              <div style="font-family: var(--font-code); font-size: 0.8rem; color: var(--accent-cyan); margin-top: 0.6rem; font-weight: 700;">Time: <span id="bruteTime">O(32)</span> | Space: <span id="bruteSpace">O(1)</span></div>
             </div>
 
             <div class="quiz-card" style="border-left: 4px solid var(--accent-green);">
               <h4 style="font-size: 0.92rem; font-weight: 900; color: var(--accent-green);">⚡ Optimized Approach</h4>
               <p id="optimalDesc" style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.45;"></p>
-              <div style="font-family: var(--font-code); font-size: 0.8rem; color: var(--accent-green); margin-top: 0.6rem; font-weight: 800;">Time: <span id="optimalTime">O(N)</span> | Space: <span id="optimalSpace">O(1)</span></div>
+              <div style="font-family: var(--font-code); font-size: 0.8rem; color: var(--accent-green); margin-top: 0.6rem; font-weight: 800;">Time: <span id="optimalTime">O(k)</span> | Space: <span id="optimalSpace">O(1)</span></div>
             </div>
           </div>
         </div>
@@ -147,7 +148,6 @@
           <div class="quiz-card">
             <h3 style="color: var(--accent-amber); font-size: 0.92rem; font-weight: 900;">⚠️ Common Mistakes & Edge Cases</h3>
             <div id="commonMistakesList" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.6rem; font-size: 0.86rem; color: var(--text-muted); line-height: 1.5;">
-              <!-- Inserted dynamically -->
             </div>
           </div>
         </div>
@@ -155,35 +155,79 @@
         <!-- QUIZ TAB -->
         <div id="tab-quiz" class="tab-content">
           <div class="quiz-container" id="quizContainer">
-            <!-- Quiz inserted dynamically -->
+          </div>
+        </div>
+
+        <!-- BIT PLAYGROUND TAB -->
+        <div id="tab-playground" class="tab-content">
+          <div class="quiz-card">
+            <h3 style="font-size: 0.92rem; font-weight: 900; color: var(--accent-cyan); margin-bottom: 0.75rem;">🎛️ Interactive Bit Playground</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <div style="display: flex; gap: 0.5rem;">
+                <div style="flex: 1;">
+                  <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">Number A:</label>
+                  <input type="number" id="playNumA" class="glass-input" value="13">
+                </div>
+                <div style="flex: 1;">
+                  <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">Number B / Shift:</label>
+                  <input type="number" id="playNumB" class="glass-input" value="7">
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <div style="flex: 1;">
+                  <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">Operation:</label>
+                  <select id="playOpSelect" class="glass-select" style="width: 100%;">
+                    <option value="AND">AND (&)</option>
+                    <option value="OR">OR (|)</option>
+                    <option value="XOR">XOR (^)</option>
+                    <option value="NOT">NOT (~)</option>
+                    <option value="LSHIFT">LEFT SHIFT (&lt;&lt;)</option>
+                    <option value="RSHIFT">RIGHT SHIFT (&gt;&gt;)</option>
+                    <option value="CHECK">CHECK BIT</option>
+                    <option value="SET">SET BIT</option>
+                    <option value="CLEAR">CLEAR BIT</option>
+                    <option value="TOGGLE">TOGGLE BIT</option>
+                  </select>
+                </div>
+                <div style="flex: 1;">
+                  <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">Bit Length:</label>
+                  <select id="playBitLenSelect" class="glass-select" style="width: 100%;">
+                    <option value="8">8-bit</option>
+                    <option value="16">16-bit</option>
+                    <option value="32">32-bit</option>
+                  </select>
+                </div>
+              </div>
+              <div id="playgroundCanvas" style="margin-top: 1rem;"></div>
+              <div id="truthTableGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.4rem; margin-top: 0.75rem;"></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- LEFT RESIZER HANDLE -->
-    <div class="panel-resizer" id="resizerLeft" title="Drag to resize Left Panel (Double click to cycle width presets)"></div>
+    <div class="panel-resizer" id="resizerLeft" title="Drag to resize Left Panel"></div>
 
     <!-- CENTER PANEL: INTERACTIVE VISUALIZATION CANVAS -->
     <section class="panel-center" id="panelCenter">
       <div class="viz-header-toolbar">
         <div style="display: flex; align-items: center; gap: 0.6rem;">
-          <button id="quickLeftToggleBtn" class="panel-toggle-btn active" title="Toggle Left Panel (Ctrl+[)">◧ Left Panel</button>
+          <button id="quickLeftToggleBtn" class="ctrl-btn active" title="Toggle Left Panel (Ctrl+[)">◧ Left Panel</button>
           <div class="algo-toggle-group">
             <button id="modeOptimalBtn" class="algo-mode-btn active">⚡ Optimized Engine</button>
-            <button id="modeInplaceBtn" class="algo-mode-btn">💾 In-Place O(1) Space</button>
             <button id="modeBruteBtn" class="algo-mode-btn">🐢 Brute Force Engine</button>
           </div>
-          <button id="quickRightToggleBtn" class="panel-toggle-btn active" title="Toggle Right Panel (Ctrl+])">◨ Right Panel</button>
+          <button id="quickRightToggleBtn" class="ctrl-btn active" title="Toggle Right Panel (Ctrl+])">◨ Right Panel</button>
         </div>
 
         <!-- CANVAS ZOOM CONTROLS -->
         <div style="display: flex; align-items: center; gap: 0.35rem;">
           <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted);">ZOOM:</span>
-          <button id="zoomOutBtn" class="panel-toggle-btn" title="Zoom Out Canvas (-)">🔍 -</button>
+          <button id="zoomOutBtn" class="ctrl-btn" title="Zoom Out Canvas (-)">🔍 -</button>
           <span id="zoomValBadge" class="badge badge-info" style="font-family: var(--font-code); min-width: 45px; text-align: center;">100%</span>
-          <button id="zoomInBtn" class="panel-toggle-btn" title="Zoom In Canvas (+)">🔍 +</button>
-          <button id="zoomResetBtn" class="panel-toggle-btn" title="Reset Zoom to 100%">🎯 Reset</button>
+          <button id="zoomInBtn" class="ctrl-btn" title="Zoom In Canvas (+)">🔍 +</button>
+          <button id="zoomResetBtn" class="ctrl-btn" title="Reset Zoom to 100%">🎯 Reset</button>
         </div>
 
         <div class="viz-status-badge">
@@ -204,19 +248,12 @@
         <!-- SCALABLE VIEWPORT WRAPPER -->
         <div id="canvasViewport" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);">
 
-          <!-- 1D ARRAY CONTAINER -->
-          <div id="arrayVisualContainer" class="array-visual-wrapper">
-            <!-- Dynamically generated 3D crystal glass array elements -->
+          <!-- PRIMARY BIT BOXES / MASK CONTAINER -->
+          <div id="arrayVisualContainer" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
           </div>
 
-          <!-- 2D MATRIX CONTAINER -->
-          <div id="matrixVisualContainer" class="matrix-visual-wrapper" style="display: none;">
-            <!-- Dynamically generated 2D grid -->
-          </div>
-
-          <!-- AUXILIARY DATA STRUCTURES -->
-          <div id="auxVisualContainer" class="aux-visual-wrapper">
-            <!-- HashMap Grid / Prefix Array / Sliding Window Callout -->
+          <!-- AUXILIARY BIT CONTAINER -->
+          <div id="auxVisualContainer" style="display: none; margin-top: 1rem; width: 100%;">
           </div>
 
         </div>
@@ -226,7 +263,7 @@
       <!-- STEP EXPLANATION FOOTER IN CANVAS -->
       <div class="viz-explanation-bar" id="explanationBar">
         <div class="exp-icon">💡</div>
-        <div class="exp-text" id="explanationText">Click Play (Space) or Next (Right Arrow) to begin stepping through the visual execution.</div>
+        <div class="exp-text" id="explanationText">Click Play (Space) or Next (Right Arrow) to begin stepping through the bit-level algorithm.</div>
       </div>
     </section>
 
@@ -239,84 +276,57 @@
         <nav id="rightTabs" style="display: flex; gap: 0.2rem;">
           <button class="tab-btn active" data-tab="tab-code">Code</button>
           <button class="tab-btn" data-tab="tab-vars">Variables</button>
-          <button class="tab-btn" data-tab="tab-dryrun">Dry Run Table</button>
           <button class="tab-btn" data-tab="tab-logs">Logs</button>
         </nav>
-        <button id="toggleRightPanelBtn" class="panel-toggle-btn" title="Collapse Right Panel (Ctrl+])">▶</button>
+        <button id="toggleRightPanelBtn" class="ctrl-btn" style="padding: 0.2rem 0.4rem; font-size: 0.72rem;" title="Collapse Right Panel (Ctrl+])">▶</button>
       </div>
 
       <div class="tab-body" style="height: calc(100% - 44px); padding: 0;">
-        <!-- CODE & DRY RUN CARD TAB -->
+        <!-- CODE TAB -->
         <div id="tab-code" class="tab-content active" style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem; height: 100%; overflow-y: auto;">
-          <div class="code-toolbar">
-            <span class="code-title">SYNCHRONIZED CODE</span>
-            <div class="lang-selector" id="langSelector">
-              <button class="lang-btn active" data-lang="javascript">JS</button>
-              <button class="lang-btn" data-lang="python">Python</button>
-              <button class="lang-btn" data-lang="java">Java</button>
-              <button class="lang-btn" data-lang="cpp">C++</button>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase;">SYNCHRONIZED CODE</span>
+            <div class="lang-selector" id="langSelector" style="display: flex; gap: 0.2rem;">
+              <button class="tab-btn active lang-btn" data-lang="python">Python</button>
+              <button class="tab-btn lang-btn" data-lang="javascript">JS</button>
+              <button class="tab-btn lang-btn" data-lang="java">Java</button>
+              <button class="tab-btn lang-btn" data-lang="cpp">C++</button>
             </div>
           </div>
-          <div id="codeDisplayBox" class="code-display-block" style="flex: 1; min-height: 250px;">
-            <!-- Rendered colorful code with highlighted current step line -->
+
+          <div id="codeDisplayBox" style="flex: 1; min-height: 250px;">
           </div>
 
           <!-- PARALLEL LIVE DRY RUN CARD -->
-          <div id="codeDryRunCard" class="quiz-card" style="border-left: 4px solid var(--accent-cyan); background: rgba(9, 14, 26, 0.85); margin-top: 0.2rem;">
+          <div id="codeDryRunCard" class="quiz-card" style="border-left: 4px solid var(--accent-cyan); background: rgba(9, 14, 26, 0.85);">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 0.3rem;">⚡ PARALLEL CODE DRY RUN</span>
+              <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em;">⚡ PARALLEL CODE DRY RUN</span>
               <span id="codeDryRunLineBadge" class="badge badge-info" style="font-family: var(--font-code);">Line 1</span>
             </div>
             <div id="codeDryRunVars" style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem;">
-              <!-- Live variable pills for active line -->
             </div>
             <div id="codeDryRunOp" style="font-family: var(--font-code); font-size: 0.84rem; color: var(--accent-gold); font-weight: 800; margin-top: 0.4rem;"></div>
             <div id="codeDryRunExp" style="font-size: 0.82rem; color: var(--text-main); margin-top: 0.2rem; line-height: 1.45;"></div>
           </div>
         </div>
 
-        <!-- DEDICATED LIVE VARIABLES WATCH GRID TAB -->
+        <!-- VARIABLES TAB -->
         <div id="tab-vars" class="tab-content" style="padding: 1rem; height: 100%; overflow-y: auto;">
           <div class="quiz-card" style="height: 100%; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 0;">
-            <h3 style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+            <h3 style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.75rem;">
               <span>🔍 Live Variable Watch Grid</span>
-              <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Real-time State</span>
             </h3>
             <div id="varWatchGrid" class="var-watch-grid" style="flex: 1; overflow-y: auto;">
-              <!-- Variable cards dynamically updated -->
-            </div>
-          </div>
-        </div>
-
-        <!-- DRY RUN TABLE TAB -->
-        <div id="tab-dryrun" class="tab-content">
-          <div class="quiz-card">
-            <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.6rem;">📊 Step-by-Step Execution Table</h3>
-            <div class="table-scroll-wrap">
-              <table class="dry-run-table">
-                <thead>
-                  <tr id="dryRunHeaderRow">
-                    <th>Step</th>
-                    <th>Iteration</th>
-                    <th>Element</th>
-                    <th>Operation</th>
-                    <th>Result / State</th>
-                  </tr>
-                </thead>
-                <tbody id="dryRunTableBody">
-                  <!-- Generated dynamically -->
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
 
         <!-- LOGS TAB -->
-        <div id="tab-logs" class="tab-content">
+        <div id="tab-logs" class="tab-content" style="padding: 1rem;">
           <div class="quiz-card">
             <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--accent-cyan); margin-bottom: 0.6rem;">📜 Execution Log Stream</h3>
-            <div id="executionLogBox" class="log-stream-box">
-              <div class="log-entry" style="color: var(--accent-cyan);">[System] Visualizer Engine Initialized with Glassy Premier Theme. Ready.</div>
+            <div id="executionLogBox" style="font-family: var(--font-code); font-size: 0.78rem; background: rgba(5,8,14,0.9); padding: 0.75rem; border-radius: 8px; max-height: 400px; overflow-y: auto; color: var(--text-muted);">
+              <div class="log-entry" style="color: var(--accent-cyan);">[System] Bit Visualizer Engine Initialized with Glassy Premier Theme. Ready.</div>
             </div>
           </div>
         </div>
@@ -346,12 +356,12 @@
         <span id="speedValLabel" class="speed-val">1.0x</span>
       </div>
 
-      <div class="color-legend-bar">
-        <span class="legend-item"><span class="legend-dot blue"></span> Current</span>
-        <span class="legend-item"><span class="legend-dot purple"></span> Pointer</span>
-        <span class="legend-item"><span class="legend-dot yellow"></span> Window</span>
-        <span class="legend-item"><span class="legend-dot green"></span> Match</span>
-        <span class="legend-item"><span class="legend-dot red"></span> Rejected</span>
+      <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.75rem;">
+        <span style="color: var(--text-muted);">Progress:</span>
+        <div style="width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+          <div id="overallProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #10b981); transition: width 0.3s ease;"></div>
+        </div>
+        <span id="overallProgressLabel" style="font-family: var(--font-code); color: var(--accent-cyan); font-weight: 700;">0 / 0 (0%)</span>
       </div>
     </div>
   </footer>
@@ -360,20 +370,14 @@
   <div id="customInputModal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title">✏️ Enter Custom Test Case</h3>
+        <h3 class="modal-title">✏️ Enter Custom Input Case</h3>
         <button id="closeModalBtn" class="modal-close-btn">&times;</button>
       </div>
-      <div class="modal-body">
-        <div style="display: flex; flex-direction: column; gap: 0.3rem;">
-          <label for="customArrayInput" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Array / Elements (comma separated):</label>
-          <input type="text" id="customArrayInput" class="glass-input" placeholder="e.g. 2, 7, 11, 15 or 1, 2, 3, 4, 5">
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 0.3rem;" id="customTargetGroup">
-          <label for="customTargetInput" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Target Value / K Value (if applicable):</label>
-          <input type="number" id="customTargetInput" class="glass-input" placeholder="e.g. 9">
-        </div>
+      <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Input Integer or Array (comma separated):</label>
+        <input type="text" id="customInputText" class="glass-input" placeholder="e.g. 11 or 4, 1, 2, 1, 2">
       </div>
-      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
         <button id="cancelModalBtn" class="ctrl-btn">Cancel</button>
         <button id="applyCustomInputBtn" class="ctrl-btn ctrl-primary">Apply & Run</button>
       </div>
@@ -387,30 +391,29 @@
         <h3 class="modal-title">⌨️ Keyboard Shortcuts Reference</h3>
         <button id="closeShortcutsBtn" class="modal-close-btn">&times;</button>
       </div>
-      <div class="modal-body">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.84rem; font-family: var(--font-code);">
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Spacebar</td><td style="padding: 0.4rem; color: var(--text-muted);">Play / Pause Animation</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">← (Left Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Step Backward</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">→ (Right Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Step Forward</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">↑ (Up Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Increase Speed</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">↓ (Down Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Decrease Speed</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">R</td><td style="padding: 0.4rem; color: var(--text-muted);">Reset Timeline</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Home / End</td><td style="padding: 0.4rem; color: var(--text-muted);">Jump to First / Last Step</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + L</td><td style="padding: 0.4rem; color: var(--text-muted);">Cycle Glassy / Dark / Light Theme</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + [</td><td style="padding: 0.4rem; color: var(--text-muted);">Toggle Left Panel Open / Close</td></tr>
-          <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + ]</td><td style="padding: 0.4rem; color: var(--text-muted);">Toggle Right Panel Open / Close</td></tr>
-          <tr><td style="padding: 0.4rem; color: var(--accent-cyan);">Esc</td><td style="padding: 0.4rem; color: var(--text-muted);">Close Modals</td></tr>
-        </table>
-      </div>
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.84rem; font-family: var(--font-code); margin-top: 0.5rem;">
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Spacebar</td><td style="padding: 0.4rem; color: var(--text-muted);">Play / Pause Animation</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">← (Left Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Step Backward</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">→ (Right Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Step Forward</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">↑ (Up Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Increase Speed</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">↓ (Down Arrow)</td><td style="padding: 0.4rem; color: var(--text-muted);">Decrease Speed</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">R</td><td style="padding: 0.4rem; color: var(--text-muted);">Reset Timeline</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">F</td><td style="padding: 0.4rem; color: var(--text-muted);">Toggle Fullscreen Mode</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + L</td><td style="padding: 0.4rem; color: var(--text-muted);">Cycle Glassy / Dark / Light Theme</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + [</td><td style="padding: 0.4rem; color: var(--text-muted);">Toggle Left Panel Open / Close</td></tr>
+        <tr style="border-bottom: 1px solid var(--border-glass);"><td style="padding: 0.4rem; color: var(--accent-cyan);">Ctrl + ]</td><td style="padding: 0.4rem; color: var(--text-muted);">Toggle Right Panel Open / Close</td></tr>
+      </table>
     </div>
   </div>
 
   <!-- SCRIPT MODULES -->
-  <script src="js/data/patterns.js"></script>
-  <script src="js/data/problems.js"></script>
-  <script src="js/engine/visualizer.js"></script>
+  <script src="js/engine/bitOperations.js"></script>
+  <script src="js/engine/visualizationEngine.js"></script>
   <script src="js/engine/stepEngine.js"></script>
   <script src="js/engine/panelResizer.js"></script>
+  <script src="js/data/patterns.js"></script>
+  <script src="js/data/problems.js"></script>
+  <script src="js/playground.js"></script>
   <script src="js/app.js"></script>
 
 </body>
