@@ -11,21 +11,27 @@ if (typeof require !== "undefined") {
   BitOperationValidator = require("./bitOperationValidator.js");
   VisualizationValidator = require("./visualizationValidator.js");
   OutputValidator = require("./outputValidator.js");
+  InvariantsValidator = require("./invariantsValidator.js");
+  LanguageSemanticsValidator = require("./languageSemanticsValidator.js");
+  RegressionSuite = require("./regressionSuite.js");
 }
 
 const AuditRunner = {
   runFullAudit() {
     console.log("=================================================================");
-    console.log("⚡ STARTING BIT MANIPULATION COMPLETE CORRECTNESS AUDIT SUITE");
+    console.log("⚡ STARTING BIT MANIPULATION COMPLETE INDEPENDENT AUDIT SUITE");
     console.log("=================================================================\n");
 
     const probVal = ProblemValidator.runAudit();
     const bitOpVal = BitOperationValidator.runAudit();
     const vizVal = VisualizationValidator.runAudit();
     const outVal = OutputValidator.runAudit();
+    const invVal = InvariantsValidator.runAudit();
+    const langVal = LanguageSemanticsValidator.runAudit();
+    const regVal = RegressionSuite.runAudit();
 
-    const totalPassed = probVal.passed + bitOpVal.passed + vizVal.passed + outVal.passed;
-    const totalFailed = probVal.failed + bitOpVal.failed + vizVal.failed + outVal.failed;
+    const totalPassed = probVal.passed + bitOpVal.passed + vizVal.passed + outVal.passed + invVal.passed + langVal.passed + regVal.passed;
+    const totalFailed = probVal.failed + bitOpVal.failed + vizVal.failed + outVal.failed + invVal.failed + langVal.failed + regVal.failed;
 
     let totalStepsCount = 0;
     Object.values(PROBLEMS_DATA).forEach(p => {
@@ -47,12 +53,16 @@ const AuditRunner = {
         SHIFT: "✓ PASS",
         MASK: "✓ PASS"
       },
+      languageSemanticsMatrix: langVal.matrix,
       problemMetadataReport: probVal.metadataReport,
       errors: [
         ...probVal.errors,
         ...bitOpVal.errors,
         ...vizVal.errors,
-        ...outVal.errors
+        ...outVal.errors,
+        ...invVal.errors,
+        ...langVal.errors,
+        ...regVal.errors
       ],
       overallStatus: totalFailed === 0 ? "✓ VERIFIED" : "❌ FAIL"
     };
@@ -71,7 +81,7 @@ const AuditRunner = {
       console.log("❌ DISCOVERED AUDIT ERRORS:");
       report.errors.forEach(err => console.log("  - " + err));
     } else {
-      console.log("✅ ALL DIFFERENTIAL TESTS, BITWISE LAWS, AND VISUALIZATION TRANSITIONS MATCH 100%!");
+      console.log("✅ ALL DIFFERENTIAL TESTS, MATHEMATICAL INVARIANTS, REGRESSION BENCHMARKS, AND TRANSITIONS VERIFIED 100%!");
     }
 
     return report;
